@@ -1,54 +1,32 @@
-<p align="center">
-  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby minimal starter
-</h1>
+# money.murph9.com
 
-## 🚀 Quick start
+A Gatsby/React statically generated site
+Deployed to an AWS S3 bucket, with user auth to another S3 bucket file for the data
 
-1.  **Create a Gatsby site.**
+---
 
-    Use the Gatsby CLI to create a new site, specifying the minimal starter.
+## Environment Setup:
 
-    ```shell
-    # create a new Gatsby site using the minimal starter
-    npm init gatsby
-    ```
+* install gatsby and node https://www.gatsbyjs.org/tutorial/part-zero/
+`npm install -g gatsby-cli`
 
-2.  **Start developing.**
+* install the aws cli https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config
 
-    Navigate into your new site’s directory and start it up.
+---
 
-    ```shell
-    cd my-gatsby-site/
-    npm run develop
-    ```
+## Useful commands (including running the project and deploying to AWS S3)
+```
+project root> npm install
+project root> gatsby develop
 
-3.  **Open the code and start customizing!**
+project root> gatsby build
+project root> aws s3 sync public/. s3://money.murph9.com --delete
+```
 
-    Your site is now running at http://localhost:8000!
+---
 
-    Edit `src/pages/index.js` to see your site update in real-time!
+https://www.gatsbyjs.org/docs/deploying-to-s3-cloudfront/
 
-4.  **Learn more**
-
-    - [Documentation](https://www.gatsbyjs.com/docs/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Tutorials](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Guides](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [API Reference](https://www.gatsbyjs.com/docs/api-reference/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Plugin Library](https://www.gatsbyjs.com/plugins?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Cheat Sheet](https://www.gatsbyjs.com/docs/cheat-sheet/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-## 🚀 Quick start (Gatsby Cloud)
-
-Deploy this starter with one click on [Gatsby Cloud](https://www.gatsbyjs.com/cloud/):
-
-[<img src="https://www.gatsbyjs.com/deploynow.svg" alt="Deploy to Gatsby Cloud">](https://www.gatsbyjs.com/dashboard/deploynow?url=https://github.com/gatsbyjs/gatsby-starter-minimal)
+Full documentation for Gatsby lives [on the website](https://www.gatsbyjs.org/). Here are some places to start:
+- **For most developers, we recommend starting with our [in-depth tutorial for creating a site with Gatsby](https://www.gatsbyjs.org/tutorial/).** It starts with zero assumptions about your level of ability and walks through every step of the process.
+- **To dive straight into code samples, head [to our documentation](https://www.gatsbyjs.org/docs/).** In particular, check out the _Guides_, _API Reference_, and _Advanced Tutorials_ sections in the sidebar.
