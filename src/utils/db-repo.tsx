@@ -29,21 +29,23 @@ export default class DataService {
         return this.rawData;
     }
 
-    save(newData: Array<JournalEntry>, success: (x: any) => void, failure: () => void) {
-        if (this.rawData.length >= newData.length) {
-            alert('AAAAh, looks like we might be deleting records, so far this is illegal.');
-            return;
+    save(newData: JournalEntry, success: (x: any) => void, failure: (x: string) => void) {
+        
+        if (newData.id >= 0 && this.rawData.filter(x => x.id == newData.id)) {
+            // update
+            this.rawData = this.rawData.map(x => x.id != newData.id ? x : newData);
+        } else {
+            // add new, and set id
+            newData.id = Math.max(...this.rawData.map(x => x.id), -1) + 1;
+            this.rawData.push(newData);
         }
-        if (this.rawData.length + 1 != newData.length) {
-            alert('Ah, looks like we might be adding more than one record, so far this is slightly illegal.');
-            return;
-        }
-        this.rawData = newData;
 
         const that = this;
-        this.awsService.saveFile(this.fileName, newData, function(response: any) {
-            that.rawData = newData;
+        this.awsService.saveFile(this.fileName, this.rawData, function(response: object) {
             success(response);
-        }, failure);
+        }, function(response: string) {
+            that.rawData = that.rawData.filter(x => x != newData); // revert save, show message
+            failure(response);
+        });
     }
 }
