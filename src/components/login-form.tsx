@@ -38,10 +38,10 @@ const LoginForm = (props: any) => {
 
     return (
         <Form onSubmit={submit}>
-            <BasicInput type="text" value={bucket} onChange={(event: any) => {setBucket(event.target.value)}} name="bucket"/>
-            <BasicInput type="text" value={region} onChange={(event: any) => {setRegion(event.target.value)}} name="region"/>
-            <BasicInput type="text" value={apiKey} onChange={(event: any) => {setApiKey(event.target.value)}} name="apiKey"/>
-            <BasicInput type="password" value={apiSecret} onChange={(event: any) => {setApiSecret(event.target.value)}} name="apiSecret"/>
+            <BasicInput type="text" value={bucket} onChange={setBucket} name="bucket"/>
+            <BasicInput type="text" value={region} onChange={setRegion} name="region"/>
+            <BasicInput type="text" value={apiKey} onChange={setApiKey} name="apiKey"/>
+            <BasicInput type="password" value={apiSecret} onChange={setApiSecret} name="apiSecret"/>
             <Button type="submit">Login</Button>
         </Form>
     );

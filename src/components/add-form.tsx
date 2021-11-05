@@ -25,20 +25,20 @@ const AddForm = (props: any) => {
             <Modal.Title>Add Record</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <BasicInput type="number" value={amount} onChange={(e: any) => {setAmount(e.currentTarget.value)}} name="Amount" />
+            <BasicInput type="number" value={amount} onChange={setAmount} name="Amount" />
             <BasicCheckbox name="Is Income" onChange={setIsIncome} checked={isIncome}/>
 
-            <BasicInput type="date" value={from} onChange={(e: any) => {setFrom(e.currentTarget.value)}} name="Starts" />
+            <BasicInput type="date" value={from} onChange={setFrom} name="Starts" />
                 
-            <BasicInput type="number" value={lengthCount} onChange={(e: any) => {setLengthCount(e.currentTarget.value)}} name="Count" />
-            <BasicInput type="select" value={lengthType} onChange={(e: any) => {setLengthType(e.currentTarget.value)}} name="Period" />
+            <BasicInput type="number" value={lengthCount} onChange={setLengthCount} name="Count" />
+            <BasicInput type="select" value={lengthType} onChange={setLengthType} name="Period" />
 
             <BasicCheckbox checked={repeats} onChange={setRepeats} name="Repeats?" />
             
-            {repeats ? <BasicInput type="date" value={lastDay} onChange={(e: any) => {setLastDay(e.currentTarget.value)}} name="Last Day" /> : <></>}
+            {repeats ? <BasicInput type="date" value={lastDay} onChange={setLastDay} name="Last Day" /> : <></>}
             
-            <BasicInput value={category} onChange={(e: any) => {setCategory(e.target.value)}} name="Category" />
-            <BasicInput value={note} onChange={(e: any) => {setNote(e.target.value)}} name="Note" />
+            <BasicInput value={category} onChange={setCategory} name="Category" />
+            <BasicInput value={note} onChange={setNote} name="Note" />
 
         </Modal.Body>
         <Modal.Footer>
