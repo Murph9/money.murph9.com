@@ -3,6 +3,7 @@ import LoginForm from "../components/login-form";
 import MainForm from "../components/main-form";
 import AwsS3Service, {AwsS3Config} from "../utils/s3-controller";
 import DataService from "../utils/db-repo";
+import JournalEntry from "../utils/db-row";
 import { graphql } from "gatsby";
 
 export const pageQuery = graphql`
@@ -11,6 +12,9 @@ query a { site { siteMetadata { awsFileName } } }`
 
 const IndexPage = (props: any) => {
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const addRow = (row: JournalEntry) => {
+    database.current.save(row, (a: object) => {}, (message: string) => { alert(message);});
+  };
 
   const database : React.MutableRefObject<DataService> = React.useRef(null);
   const login = function(creds: AwsS3Config) {
@@ -25,9 +29,13 @@ const IndexPage = (props: any) => {
     return (<>Loading...</>);
   }
 
+  if (!loggedIn) {
+    return (<LoginForm callback={login} />);
+  }
+
   return (
   <>
-    {!loggedIn ? <LoginForm callback={login} /> : <MainForm data={database.current.getRaw()}/>}
+    <MainForm data={database.current.getRaw()} addRow={addRow} />
   </>
   );
 };
