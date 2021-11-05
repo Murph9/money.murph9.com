@@ -4,11 +4,7 @@ module.exports = {
     title: "Money But Daily",
     description: `my money, go away`,
     author: `@murph9`,
-    awsInfo: {
-      bucketName: `murph9-data`,
-      region: `ap-southeast-2`,
-      fileName: `moneyButDaily.json`
-    }
+    awsFileName: `moneyButDaily.json`
   },
   plugins: [
     {

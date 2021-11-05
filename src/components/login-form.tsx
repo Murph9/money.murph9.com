@@ -2,6 +2,7 @@ import * as React from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import BasicInput from "./basic-input";
+import { AwsS3Config } from "../utils/s3-controller";
 
 const getFromLocalStorage = function(key: string, fallback: string) {
     const result = window.localStorage.getItem(key)
@@ -10,7 +11,7 @@ const getFromLocalStorage = function(key: string, fallback: string) {
     return fallback;
 }
 
-const LoginForm = () => {
+const LoginForm = (props: any) => {
     const [bucket, setBucket] = React.useState(getFromLocalStorage("bucket", ""));
     const [region, setRegion] = React.useState(getFromLocalStorage("region", ""));
     const [apiKey, setApiKey] = React.useState("");
@@ -21,7 +22,13 @@ const LoginForm = () => {
         localStorage.setItem("bucket", bucket);
         localStorage.setItem("region", region);
 
-        // TODO use them all
+        const creds = new AwsS3Config();
+        creds.apiKey = apiKey;
+        creds.apiSecret = apiSecret;
+        creds.bucketName = bucket;
+        creds.bucketSite = region;
+
+        props.callback(creds);
     }
 
     return (
