@@ -22,6 +22,11 @@ const LoginForm = (props: any) => {
         localStorage.setItem("bucket", bucket);
         localStorage.setItem("region", region);
 
+        if (!bucket || !region || !apiSecret || !apiKey) {
+            alert('All fields must be set.'); // TODO better validation please
+            return;
+        }
+
         const creds = new AwsS3Config();
         creds.apiKey = apiKey;
         creds.apiSecret = apiSecret;

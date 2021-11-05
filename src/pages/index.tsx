@@ -12,17 +12,22 @@ query a { site { siteMetadata { awsFileName } } }`
 const IndexPage = (props: any) => {
   const [loggedIn, setLoggedIn] = React.useState(false);
 
-  let s3Service : AwsS3Service = null;
-  let database : DataService = null;
+  const database : React.MutableRefObject<DataService> = React.useRef(null);
   const login = function(creds: AwsS3Config) {
-    s3Service = new AwsS3Service(creds);
-    database = new DataService(s3Service, props.data.site.siteMetadata.awsFileName);
-    database.load(() => setLoggedIn(true), (err) => { alert(err); });
+    const s3Service = new AwsS3Service(creds);
+    database.current = new DataService(s3Service, props.data.site.siteMetadata.awsFileName);
+    database.current.load(() => {
+      setLoggedIn(true);
+    }, (err) => { alert(err); });
   }
   
+  if (loggedIn && database.current == null) {
+    return (<>Loading...</>);
+  }
+
   return (
   <>
-    {!loggedIn ? <LoginForm callback={login} /> : <MainForm />}
+    {!loggedIn ? <LoginForm callback={login} /> : <MainForm data={database.current.getRaw()}/>}
   </>
   );
 };

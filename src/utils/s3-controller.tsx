@@ -43,7 +43,7 @@ export default class AwsS3Service {
 
     createNewFile(file: string, success: (err: any) => void, failure: (err: string) => void) {
         console.log("Creating a new file: " + file);
-        const initFileContents = '{}'
+        const initFileContents = '[]'
         this.s3.putObject({ Bucket: this.config.bucketName, Key: file, Body: initFileContents, ContentType: "application/json" }, function(err) {
             if (err) {
                 console.log("Failed to create", err);

@@ -1,10 +1,11 @@
-import AwsS3Service, {AwsS3Config} from "./s3-controller";
+import JournalEntry from "./db-row";
+import AwsS3Service from "./s3-controller";
 
 export default class DataService {
     
     awsService: AwsS3Service;
     fileName: string;
-    rawData: any; // TODO
+    rawData: Array<JournalEntry>;
     
     constructor(s3: AwsS3Service, fileName: string) {
         this.awsService = s3;
@@ -14,7 +15,7 @@ export default class DataService {
     load(success: () => void, failure: (err: string) => void) {
         const that = this;
         this.awsService.getFile(this.fileName, function(result: any) {
-            console.log(result);
+            console.log("Entries: " + result.obj.length);
             that.rawData = result.obj;
             success();
         }, (message: string) => failure(message));
@@ -28,11 +29,16 @@ export default class DataService {
         return this.rawData;
     }
 
-    save(newData, success: (x: any) => {}, failure: () => {}) {
-        // validate thats its not too weird, like preventing losing or gaining more than one folder
-        const diff = Object.keys(newData).length - Object.keys(this.rawData).length;
-        if (Math.abs(diff) > 1)
-            throw new Error("oops");
+    save(newData: Array<JournalEntry>, success: (x: any) => void, failure: () => void) {
+        if (this.rawData.length >= newData.length) {
+            alert('AAAAh, looks like we might be deleting records, so far this is illegal.');
+            return;
+        }
+        if (this.rawData.length + 1 != newData.length) {
+            alert('Ah, looks like we might be adding more than one record, so far this is slightly illegal.');
+            return;
+        }
+        this.rawData = newData;
 
         const that = this;
         this.awsService.saveFile(this.fileName, newData, function(response: any) {

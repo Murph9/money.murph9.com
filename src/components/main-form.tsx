@@ -1,7 +1,10 @@
 import * as React from "react";
 
-const MainForm = () => {
-    return (<>Yo</>);
+const MainForm = (props: any) => {
+    return (<>
+        <div>Yo</div>
+        <div>{JSON.stringify(props.data)}</div>
+    </>);
 };
 
 export default MainForm;
