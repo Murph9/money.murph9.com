@@ -4,20 +4,25 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import InputGroup from 'react-bootstrap/InputGroup';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import JournalEntry, { DayType } from "../utils/db-row";
-import { BasicInput, BasicTextArea, BasicCheckbox } from "./basic-input";
 
 
 const AddForm = (props: any) => {
-    const [amount, setAmount] = React.useState(0);
-    const [isIncome, setIsIncome] = React.useState(false);
-    const [from, setFrom] = React.useState(new Date().toISOString().slice(0, 10));
-    const [lengthCount, setLengthCount] = React.useState(1);
-    const [lengthType, setLengthType] = React.useState(DayType.Day);
-    const [repeats, setRepeats] = React.useState(false);
-    const [lastDay, setLastDay] = React.useState(null);
-    const [category, setCategory] = React.useState("");
-    const [note, setNote] = React.useState("");
+    const amount = React.createRef<HTMLInputElement>();
+    const isIncome = React.createRef<HTMLInputElement>();
+
+    const from = React.createRef<HTMLInputElement>();
+    const periodCount = React.createRef<HTMLInputElement>();
+
+    const periodType = React.createRef<HTMLSelectElement>();
+
+    const [repeats, setRepeats] = React.useState();
+    const lastDay = React.createRef<HTMLInputElement>();
+    
+    const category = React.createRef<HTMLSelectElement>();
+    const note = React.createRef<HTMLTextAreaElement>();
 
     const save = (event: any) => {
         event.preventDefault();
@@ -36,24 +41,59 @@ const AddForm = (props: any) => {
                 <InputGroup className="mb-3">
                     <InputGroup.Text>$</InputGroup.Text>
                     <FloatingLabel label="Amount">
-                        <BasicInput type="number" value={amount} onChange={setAmount} required={true} />
+                        <Form.Control type="number" defaultValue={0} ref={amount} />
                     </FloatingLabel>
 
-                    <BasicCheckbox name="Is Income" onChange={setIsIncome} checked={isIncome} />
+                    <Form.Check id="isIncome" ref={isIncome} label="Is Income" />
                 </InputGroup>
-                
 
-                <BasicInput type="date" value={from} onChange={setFrom} />
-                    
-                <BasicInput type="number" value={lengthCount} onChange={setLengthCount} />
-                <BasicInput type="select" value={lengthType} onChange={setLengthType} />
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm={4}>Start Date</Form.Label>
+                    <Col sm={8}>
+                        <Form.Control type="date" ref={from} defaultValue={new Date().toISOString().slice(0, 10)} />
+                    </Col>
+                </Form.Group>
 
-                <BasicCheckbox checked={repeats} onChange={setRepeats} name="Repeats?" />
+                <Form.Group as={Row} className="mb-3">
+                    <Col sm={4}>
+                        <Form.Control type="number" min="0" ref={periodCount} defaultValue={1} />
+                    </Col>
+                    <Col sm={8}>
+                        <Form.Select ref={periodType} defaultValue={DayType.Day}>
+                            <option value={DayType.Day}>Day</option>
+                            <option value={DayType.Week}>Week</option>
+                            <option value={DayType.Month}>Month</option>
+                            <option value={DayType.Quarter}>Quarter</option>
+                            <option value={DayType.Year}>Year</option>
+                        </Form.Select>
+                    </Col>
+                </Form.Group>
                 
-                {repeats ? <BasicInput type="date" value={lastDay} onChange={setLastDay} /> : <></>}
+                <Form.Group as={Row} className="mb-3">
+                    <Col sm={4}>
+                        <Form.Check id="repeats" value={repeats} onChange={(e:any) => setRepeats(e.currentTarget.checked)} label={!repeats ? "Repeats?" : "Repeats until"} />
+                    </Col>
+                    <Col sm={8}>
+                        {repeats ? <Form.Control type="date" ref={lastDay} /> : null}
+                    </Col>
+                </Form.Group>
                 
-                <BasicInput value={category} onChange={setCategory} />
-                <BasicTextArea value={note} onChange={setNote} />
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm={4}>Category</Form.Label>
+                    <Col sm={8}>
+                        <Form.Select ref={category} >
+                            <option>Please generate this</option>
+                            <option>really</option>
+                        </Form.Select>
+                    </Col>
+                </Form.Group>
+                
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm={4}>Free text</Form.Label>
+                    <Col sm={8}>
+                        <Form.Control ref={note} as="textarea"/>
+                    </Col>
+                </Form.Group>
             </Form>
         </Modal.Body>
         <Modal.Footer>
