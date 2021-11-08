@@ -1,4 +1,5 @@
 import * as React from "react";
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -7,10 +8,12 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import JournalEntry, { DayType } from "../utils/db-row";
+import JournalEntry, { DayType, parseDayType } from "../utils/db-row";
 import TypeAhead from "./typeahead.js";
 
 const AddForm = (props: any) => {
+    const [alert, setAlert] = React.useState<string>();
+
     const amount = React.createRef<HTMLInputElement>();
     const isIncome = React.createRef<HTMLInputElement>();
 
@@ -28,7 +31,26 @@ const AddForm = (props: any) => {
     const save = (event: any) => {
         event.preventDefault();
 
-        props.save(null);
+        const entry = new JournalEntry();
+        
+        entry.isIncome = isIncome.current.checked;
+        entry.from = from.current.valueAsDate;
+        entry.amount = amount.current.valueAsNumber;
+        entry.lengthCount = periodCount.current.valueAsNumber;
+        entry.lengthType = parseDayType(periodType.current.value);
+        entry.repeats = repeats;
+        entry.lastDay = lastDay.current ? lastDay.current.valueAsDate : null;
+        entry.category = category;
+        entry.note = note.current.value;
+
+        setAlert(entry.validate());
+
+        if (alert) {
+            return;
+        }
+
+        console.log("Saving:", entry);
+        props.save(entry);
     }
     
 
@@ -38,15 +60,21 @@ const AddForm = (props: any) => {
             <Modal.Title>Add Record</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+            {alert ? <Alert variant="danger">{alert}</Alert> : null}
             <Form onSubmit={save}>
-                <InputGroup className="mb-3">
-                    <InputGroup.Text>$</InputGroup.Text>
-                    <FloatingLabel label="Amount">
-                        <Form.Control type="number" defaultValue={0} ref={amount} />
-                    </FloatingLabel>
-
-                    <Form.Check id="isIncome" ref={isIncome} label="Is Income" />
-                </InputGroup>
+                <Form.Group as={Row} className="mb-3">
+                    <Col sm={7}>
+                        <InputGroup>
+                            <InputGroup.Text>$</InputGroup.Text>
+                            <FloatingLabel label="Amount">
+                                <Form.Control type="number" defaultValue={0} ref={amount} />
+                            </FloatingLabel>
+                        </InputGroup>
+                    </Col>
+                    <Col sm={5}>
+                        <Form.Check id="isIncome" ref={isIncome} label="Is Income" />
+                    </Col>
+                </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Start Date</Form.Label>

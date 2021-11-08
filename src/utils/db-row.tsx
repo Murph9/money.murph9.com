@@ -9,29 +9,24 @@ export const enum DayType {
     Quarter,
     Year
 }
-export const parseDayType = function(str: string) {
-    switch(str) {
-        case this.None:
-        case this.Day:
-        case this.Week:
-        case this.Month:
-        case this.Quarter:
-        case this.Year:
-            return str;
-        case 'D': case 'd':
-            return this.Day;
-        case 'W': case 'w':
-            return this.Week;
-        case 'M': case 'm':
-            return this.Month;
-        case 'Q': case 'q':
-            return this.Quarter;
-        case 'Y': case 'y':
-            return this.Year;
+export const parseDayType = function(str: string): DayType {
+    switch(str.toLowerCase()) {
+        case '0': case 'n': case 'none':
+            return DayType.None;
+        case '1': case 'day': case 'd':
+            return DayType.Day;
+        case '2': case 'w': case 'week':
+            return DayType.Week;
+        case '3': case 'm': case 'month':
+            return DayType.Month;
+        case '4': case 'q': case 'quarter':
+            return DayType.Quarter;
+        case '5': case 'y': case 'year':
+            return DayType.Year;
     }
 
     throw new Error("AAAA no type found for: " + str);
-}
+};
 
 
 export default class JournalEntry {
@@ -59,8 +54,6 @@ export default class JournalEntry {
             return "The start date must be set";
         if (this.lastDay != null && this.lastDay <= this.from)
             return "LastDay date earlier than the start date (From).";
-        if (!this.repeats && this.lastDay != null)
-            return "Must be repeating for LastDay to be set.";
 
         return null;
     }

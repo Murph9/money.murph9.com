@@ -6,6 +6,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 const TypeAhead = (props) => {
     return <Typeahead
+            id={props.id}
             allowNew
             placeholder={props.placeholder}
             options={props.options}
