@@ -10,7 +10,10 @@ export const enum DayType {
     Year
 }
 export const parseDayType = function(str: string): DayType {
-    switch(str.toLowerCase()) {
+    if (!str)
+        return DayType.None;
+    
+    switch(str.toString().toLowerCase()) {
         case '0': case 'n': case 'none':
             return DayType.None;
         case '1': case 'day': case 'd':

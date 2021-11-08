@@ -1,4 +1,4 @@
-import JournalEntry from "./db-row";
+import JournalEntry, {parseDayType} from "./db-row";
 import AwsS3Service from "./s3-controller";
 
 export default class DataService {
@@ -16,7 +16,20 @@ export default class DataService {
         const that = this;
         this.awsService.getFile(this.fileName, function(result: any) {
             console.log("Entries: " + result.obj.length);
-            that.rawData = result.obj;
+            that.rawData = result.obj.map((x: object) => {
+                const entry = new JournalEntry();
+                entry.id = x['id'];
+                entry.amount = x['amount'];
+                entry.category = x['category'];
+                entry.from = new Date(Date.parse(x['from']));
+                entry.repeats = x['repeats'];
+                entry.isIncome = x['isIncome'];
+                entry.lastDay = new Date(Date.parse(x['lastDay']))
+                entry.lengthCount = x['lengthCount'];
+                entry.lengthType = parseDayType(x['lengthType']);
+                entry.note = x['note'];
+                return entry;
+            });
             success();
         }, (message: string) => failure(message));
     }

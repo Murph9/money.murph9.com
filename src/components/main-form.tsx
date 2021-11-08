@@ -5,6 +5,7 @@ import Toast from 'react-bootstrap/Toast';
 
 import JournalEntry from "../utils/db-row";
 import AddForm from './add-form';
+import RecordList from "./record-list";
 
 const MainForm = (props: any) => {
     const [add, setAdd] = React.useState(false);
@@ -16,22 +17,23 @@ const MainForm = (props: any) => {
         }
 
         setShowToast("Record saved, yay");
-        
         props.addRow(obj);
     }
     const handleExit = () => {
         setShowToast("Record not saved");
         setAdd(false);
     };
-
     const [showToast, setShowToast] = React.useState("");
 
+    const [list, setList] = React.useState(false);
+    const handleList = () => setList(true);
+
     return (<>
-        <div>Yo</div>
         <Button variant="primary" onClick={handleShow}>Add</Button>
         <AddForm show={add} save={handleClose} exit={handleExit} entry={new JournalEntry()}/>
         
-        <div>{JSON.stringify(props.data)}</div>
+        <Button variant="secondary" onClick={handleList}>View All Records</Button>
+        <RecordList data={props.data} />
 
         <ToastContainer className="p-3" position={'top-center'}>
             <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={3000} autohide bg='snfo'>
