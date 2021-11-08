@@ -6,8 +6,9 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import JournalEntry, { DayType } from "../utils/db-row";
 
+import JournalEntry, { DayType } from "../utils/db-row";
+import TypeAhead from "./typeahead.js";
 
 const AddForm = (props: any) => {
     const amount = React.createRef<HTMLInputElement>();
@@ -21,7 +22,7 @@ const AddForm = (props: any) => {
     const [repeats, setRepeats] = React.useState();
     const lastDay = React.createRef<HTMLInputElement>();
     
-    const category = React.createRef<HTMLSelectElement>();
+    const [category, setCategorySelections] = React.useState([]);
     const note = React.createRef<HTMLTextAreaElement>();
 
     const save = (event: any) => {
@@ -81,10 +82,7 @@ const AddForm = (props: any) => {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Category</Form.Label>
                     <Col sm={8}>
-                        <Form.Select ref={category} >
-                            <option>Please generate this</option>
-                            <option>really</option>
-                        </Form.Select>
+                        <TypeAhead id="categoryButBetter" options={['TODO', 'bbb', 'tree']} selected={category} onChange={setCategorySelections} placeholder="Choose one..."/>
                     </Col>
                 </Form.Group>
                 
