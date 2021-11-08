@@ -35,13 +35,16 @@ const AddForm = (props: any) => {
     const save = (event: any) => {
         event.preventDefault();
 
-        const categoryNew = category.length < 1 ? categorySearch : category[0].label;
+        let categoryNew = category.length < 1 ? categorySearch : category[0];
+        if (categoryNew.hasOwnProperty('label'))
+            categoryNew = categoryNew.label;
         if (!categoryNew) {
             setAlert("Please set a category");
             return;
         }
 
         const entry = new JournalEntry();
+        entry.id = props.id; // to support editing
         entry.isIncome = isIncome.current.checked;
         entry.from = from.current.valueAsDate;
         entry.amount = amount.current.valueAsNumber;
@@ -52,9 +55,9 @@ const AddForm = (props: any) => {
         entry.category = categoryNew;
         entry.note = note.current.value;
 
-        setAlert(entry.validate());
-
-        if (alert) {
+        const message = entry.validate();
+        if (message) {
+            setAlert(message);
             return;
         }
 

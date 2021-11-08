@@ -14,15 +14,17 @@ const MainForm = (props: any) => {
         if (obj != null && !(obj instanceof JournalEntry)) {
             throw new Error("Returned object was not the right type " + obj);
         }
+
+        setShowToast("Record saved, yay");
         
         props.addRow(obj);
     }
     const handleExit = () => {
-        setNoSaveToast(true);
+        setShowToast("Record not saved");
         setAdd(false);
     };
 
-    const [showNoSaveToast, setNoSaveToast] = React.useState(false);
+    const [showToast, setShowToast] = React.useState("");
 
     return (<>
         <div>Yo</div>
@@ -32,12 +34,11 @@ const MainForm = (props: any) => {
         <div>{JSON.stringify(props.data)}</div>
 
         <ToastContainer className="p-3" position={'top-center'}>
-            <Toast show={showNoSaveToast} onClose={() => setNoSaveToast(false)} delay={3000} autohide bg='snfo'>
+            <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={3000} autohide bg='snfo'>
                 <Toast.Header>
-                    <strong className="me-auto">Record not saved</strong>
+                    <strong className="me-auto">{showToast}</strong>
                     <small>(just then)</small>
                 </Toast.Header>
-                
             </Toast>
         </ToastContainer>
     </>);
