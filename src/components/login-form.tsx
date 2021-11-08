@@ -13,26 +13,28 @@ const getFromLocalStorage = function(key: string, fallback: string) {
 }
 
 const LoginForm = (props: any) => {
-    const [bucket, setBucket] = React.useState(getFromLocalStorage("bucket", ""));
-    const [region, setRegion] = React.useState(getFromLocalStorage("region", ""));
-    const [apiKey, setApiKey] = React.useState("");
-    const [apiSecret, setApiSecret] = React.useState("");
+    const bucket = React.createRef<HTMLInputElement>();
+    const region = React.createRef<HTMLInputElement>();
+
+    const apiKey = React.createRef<HTMLInputElement>();
+    const apiSecret = React.createRef<HTMLInputElement>();
+
     const submit = function(evt: any) {
         evt.preventDefault();
 
-        localStorage.setItem("bucket", bucket);
-        localStorage.setItem("region", region);
+        localStorage.setItem("bucket", bucket.current.value);
+        localStorage.setItem("region", region.current.value);
 
-        if (!bucket || !region || !apiSecret || !apiKey) {
+        const creds = new AwsS3Config();
+        creds.apiKey = apiKey.current.value;
+        creds.apiSecret = apiSecret.current.value;
+        creds.bucketName = bucket.current.value;
+        creds.bucketSite = region.current.value;
+
+        if (!creds.bucketName || !creds.bucketSite || !creds.apiSecret || !creds.apiKey) {
             alert('All fields must be set.'); // TODO better validation please
             return;
         }
-
-        const creds = new AwsS3Config();
-        creds.apiKey = apiKey;
-        creds.apiSecret = apiSecret;
-        creds.bucketName = bucket;
-        creds.bucketSite = region;
 
         props.callback(creds);
     }
@@ -40,19 +42,19 @@ const LoginForm = (props: any) => {
     return (
         <Form onSubmit={submit}>
             <FloatingLabel label="AWS Bucket Name">
-                <BasicInput id="bucket" type="text" value={bucket} onChange={setBucket}/>
+                <Form.Control ref={bucket} defaultValue={getFromLocalStorage("bucket", "")}/> 
             </FloatingLabel>
             
             <FloatingLabel label="AWS Region">
-                <BasicInput type="text" value={region} onChange={setRegion}/>
+                <Form.Control ref={region} defaultValue={getFromLocalStorage("region", "")}/> 
             </FloatingLabel>
 
             <FloatingLabel label="AWS Api Key">
-                <BasicInput type="text" value={apiKey} onChange={setApiKey}/>
+                <Form.Control ref={apiKey} defaultValue={""} />
             </FloatingLabel>
             
             <FloatingLabel label="AWS Api Secret">
-                <BasicInput type="password" value={apiSecret} onChange={setApiSecret}/>
+                <Form.Control type="password" ref={apiSecret} defaultValue={""} />
             </FloatingLabel>
 
             <Button type="submit">Login</Button>
