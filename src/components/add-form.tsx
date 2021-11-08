@@ -26,6 +26,8 @@ const AddForm = (props: any) => {
     const lastDay = React.createRef<HTMLInputElement>();
     
     const [category, setCategorySelections] = React.useState([]);
+    const [categorySearch, setCategorySearch] = React.useState();
+
     const note = React.createRef<HTMLTextAreaElement>();
 
     // TODO get values from props.entry to edit a record
@@ -33,8 +35,13 @@ const AddForm = (props: any) => {
     const save = (event: any) => {
         event.preventDefault();
 
+        const categoryNew = category.length < 1 ? categorySearch : category[0].label;
+        if (!categoryNew) {
+            setAlert("Please set a category");
+            return;
+        }
+
         const entry = new JournalEntry();
-        
         entry.isIncome = isIncome.current.checked;
         entry.from = from.current.valueAsDate;
         entry.amount = amount.current.valueAsNumber;
@@ -42,7 +49,7 @@ const AddForm = (props: any) => {
         entry.lengthType = parseDayType(periodType.current.value);
         entry.repeats = repeats;
         entry.lastDay = lastDay.current ? lastDay.current.valueAsDate : null;
-        entry.category = category;
+        entry.category = categoryNew;
         entry.note = note.current.value;
 
         setAlert(entry.validate());
@@ -112,7 +119,7 @@ const AddForm = (props: any) => {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Category</Form.Label>
                     <Col sm={8}>
-                        <TypeAhead id="categoryButBetter" options={['TODO', 'bbb', 'tree']} selected={category} onChange={setCategorySelections} placeholder="Choose one..."/>
+                        <TypeAhead id="categoryButBetter" options={['TODO', 'bbb', 'tree']} selected={category} onChange={setCategorySelections} onInputChange={setCategorySearch} />
                     </Col>
                 </Form.Group>
                 

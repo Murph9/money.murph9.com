@@ -31,15 +31,15 @@ export const parseDayType = function(str: string): DayType {
 
 export default class JournalEntry {
     id: number = -1;
-    isIncome = false;
-    from = null;
-    amount = 0;
-    lengthCount = 0;
+    isIncome: boolean = false;
+    from: Date = null;
+    amount: number = 0;
+    lengthCount: number = 0;
     lengthType = DayType.None;
-    repeats = false;
-    lastDay = null;
-    category = null;
-    note = null;
+    repeats: boolean = false;
+    lastDay: Date = null;
+    category: string = null;
+    note: string = null;
 
     validate() {
         if (this.amount <= 0)
@@ -48,6 +48,8 @@ export default class JournalEntry {
             return "Length count cannot be 0, it is only valid for the day type.";
         if (this.lengthCount <= 0)
             return "Length count cannot be negative.";
+        if (this.lengthCount % 1 != 0)
+            return "Length count must be a whole number";
         if (this.lengthType == DayType.None)
             return "Length type must not be None";
         if (!this.from)

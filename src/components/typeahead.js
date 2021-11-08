@@ -13,6 +13,7 @@ const TypeAhead = (props) => {
             newSelectionPrefix="New item:"
             selected={props.selected}
             onChange={props.onChange}
+            onInputChange={props.onInputChange}
         />;
 };
 
