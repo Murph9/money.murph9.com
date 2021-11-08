@@ -28,6 +28,8 @@ const AddForm = (props: any) => {
     const [category, setCategorySelections] = React.useState([]);
     const note = React.createRef<HTMLTextAreaElement>();
 
+    // TODO get values from props.entry to edit a record
+
     const save = (event: any) => {
         event.preventDefault();
 

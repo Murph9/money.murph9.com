@@ -17,7 +17,7 @@ const MainForm = (props: any) => {
     return (<>
         <div>Yo</div>
         <Button variant="primary" onClick={handleShow}>Add</Button>
-        <AddForm show={add} save={handleClose} exit={handleExit} />
+        <AddForm show={add} save={handleClose} exit={handleExit} entry={new JournalEntry()}/>
         
         <div>{JSON.stringify(props.data)}</div>
     </>);
