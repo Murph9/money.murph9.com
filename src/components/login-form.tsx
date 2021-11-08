@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { BasicInput } from "./basic-input";
 import { AwsS3Config } from "../utils/s3-controller";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 const getFromLocalStorage = function(key: string, fallback: string) {
     const result = window.localStorage.getItem(key)
@@ -38,10 +39,22 @@ const LoginForm = (props: any) => {
 
     return (
         <Form onSubmit={submit}>
-            <BasicInput type="text" value={bucket} onChange={setBucket} name="bucket"/>
-            <BasicInput type="text" value={region} onChange={setRegion} name="region"/>
-            <BasicInput type="text" value={apiKey} onChange={setApiKey} name="apiKey"/>
-            <BasicInput type="password" value={apiSecret} onChange={setApiSecret} name="apiSecret"/>
+            <FloatingLabel label="AWS Bucket Name">
+                <BasicInput id="bucket" type="text" value={bucket} onChange={setBucket}/>
+            </FloatingLabel>
+            
+            <FloatingLabel label="AWS Region">
+                <BasicInput type="text" value={region} onChange={setRegion}/>
+            </FloatingLabel>
+
+            <FloatingLabel label="AWS Api Key">
+                <BasicInput type="text" value={apiKey} onChange={setApiKey}/>
+            </FloatingLabel>
+            
+            <FloatingLabel label="AWS Api Secret">
+                <BasicInput type="password" value={apiSecret} onChange={setApiSecret}/>
+            </FloatingLabel>
+
             <Button type="submit">Login</Button>
         </Form>
     );

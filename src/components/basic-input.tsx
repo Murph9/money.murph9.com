@@ -3,14 +3,15 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 
 export const BasicInput = (props: any) => {
-    return (
-        <Form.Group controlId={props.name}>
-            <Form.Label>{props.name} </Form.Label>
-            <Form.Control type={props.type} value={props.value}
-                onChange={(e:any) => {props.onChange(e.currentTarget.value)}}
-            />
-        </Form.Group>
-    );
+    return (<Form.Control id={props.id} type={props.type} value={props.value}
+            onChange={(e:any) => {props.onChange(e.currentTarget.value)}}
+    />);
+}
+
+export const BasicTextArea = (props: any) => {
+    return (<Form.Control value={props.value} as="textarea"
+            onChange={(e:any) => {props.onChange(e.currentTarget.value)}}
+    />);
 }
 
 export const BasicCheckbox = (props: any) => {
