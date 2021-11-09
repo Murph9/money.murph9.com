@@ -22,14 +22,17 @@ const IndexPage = (props: any) => {
     database.current = new DataService(s3Service, props.data.site.siteMetadata.awsFileName);
     database.current.load((data: Array<JournalEntry>) => {
       setLoggedIn(true);
-      calc.current = new Calc(data);
+      setCalc(new Calc(data));
     }, (err) => { alert(err); });
   }
-
-  const calc : React.MutableRefObject<Calc> = React.useRef(null);
-  
-  if (loggedIn && database.current == null && calc.current == null) {
+  const [calc, setCalc] = React.useState<Calc>(null);
+    
+  if (loggedIn && database.current == null) {
     return (<>Loading...</>);
+  }
+
+  if (loggedIn && calc == null) {
+    return (<>Generating...</>);
   }
 
   if (!loggedIn) {
@@ -38,7 +41,7 @@ const IndexPage = (props: any) => {
 
   return (
   <>
-    <MainForm data={database.current.getRaw()} addRow={addRow} calc={calc.current} />
+    <MainForm data={database.current.getRaw()} addRow={addRow} calc={calc} />
   </>
   );
 };

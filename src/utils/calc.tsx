@@ -1,4 +1,4 @@
-import JournalEntry from '../utils/db-row';
+import JournalEntry, { DayType } from '../utils/db-row';
 
 class Range {
     row: JournalEntry;
@@ -36,5 +36,22 @@ export default class Calc {
         }
         console.log("Ranges length:", this.dayRanges.length);
         console.log("Categories: ", this.categories.length);
+    }
+
+    totalFor(type: DayType, startDate: Date): number {
+        if (type == DayType.Day)
+            return this.rowsForDay(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+        return null;
+    }
+
+    rowsForDay(startDate: Date): Array<JournalEntry> {
+        const list: Array<JournalEntry> = [];
+        for (const range of this.dayRanges) {
+            if (!range.inRange(startDate))
+                continue;
+
+            list.push(range.row);
+        }
+        return list;
     }
 }

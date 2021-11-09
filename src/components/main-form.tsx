@@ -6,6 +6,7 @@ import Toast from 'react-bootstrap/Toast';
 import JournalEntry from "../utils/db-row";
 import AddForm from './add-form';
 import RecordList from "./record-list";
+import BarGraphView from './bar-graph-view';
 
 const MainForm = (props: any) => {
     const [add, setAdd] = React.useState(false);
@@ -30,9 +31,12 @@ const MainForm = (props: any) => {
     return (<>
         <Button variant="primary" onClick={handleShow}>Add</Button>
         <AddForm show={add} save={handleClose} exit={handleExit} entry={new JournalEntry()}/>
-        
+
+        <BarGraphView calc={props.calc} />
+
         <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
         {list ? <RecordList data={props.data} /> : null}
+
 
         <ToastContainer className="p-3" position={'top-center'}>
             <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={3000} autohide bg='snfo'>

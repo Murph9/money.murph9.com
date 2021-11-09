@@ -18,6 +18,7 @@ const Entry = (props: EntryProps) => {
         <td>{props.row.category}</td>
         <td>${props.row.amount}</td>
         <td>{props.row.from.toLocaleDateString()}</td>
+        <td>{props.row.calcLastDay().toLocaleDateString()}</td>
     </tr>;
 }
 
@@ -45,6 +46,7 @@ const RecordList = (props: RecordListProps) => {
                     <th>Category</th>
                     <th>Amount</th>
                     <th>Date</th>
+                    <th>Length</th>
                 </tr>
             </thead>
             <tbody>
