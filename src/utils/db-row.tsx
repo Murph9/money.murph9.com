@@ -1,6 +1,6 @@
 import { DateLib } from "./date-helpers";
 
-export const enum DayType {
+export enum DayType {
     None,
 
     Day,
@@ -102,6 +102,6 @@ export default class JournalEntry {
         }
 
         //else its forever or if its set
-        return this.lastDay == null ? new Date(9999) : this.lastDay;
+        return this.lastDay == null ? new Date(9999, 12, 1) : this.lastDay;
     }
 }

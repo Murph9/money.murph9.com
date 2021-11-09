@@ -24,7 +24,7 @@ export default class DataService {
                 entry.from = new Date(Date.parse(x['from']));
                 entry.repeats = x['repeats'];
                 entry.isIncome = x['isIncome'];
-                entry.lastDay = new Date(Date.parse(x['lastDay']))
+                entry.lastDay = x['lastDay'] ? new Date(Date.parse(x['lastDay'])) : null
                 entry.lengthCount = x['lengthCount'];
                 entry.lengthType = parseDayType(x['lengthType']);
                 entry.note = x['note'];
