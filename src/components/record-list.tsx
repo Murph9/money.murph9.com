@@ -2,15 +2,18 @@ import * as React from "react";
 import JournalEntry, { DayType } from "../utils/db-row";
 import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
 const pageSize: number = 20;
 
 type RecordListProps = {
-    data: Array<JournalEntry>
+    data: Array<JournalEntry>;
+    edit: (row: JournalEntry) => void;
 }
 
 type EntryProps = {
-    row: JournalEntry
+    row: JournalEntry;
+    edit: (row: JournalEntry) => void;
 }
 
 const Entry = (props: EntryProps) => {
@@ -21,7 +24,7 @@ const Entry = (props: EntryProps) => {
         <td>${props.row.amount.toFixed(2)}{perDay}</td>
         <td>{props.row.from.toLocaleDateString()}</td>
         <td>{length}</td>
-        <td>Edit TODO</td>
+        <td><Button onClick={() => props.edit(props.row)}>Edit</Button></td>
     </tr>;
 }
 
@@ -37,7 +40,7 @@ const RecordList = (props: RecordListProps) => {
 
     const items = [];
     for (let i = pageSize*pageNum; i < props.data.length && i < pageSize*(pageNum+1); i++) {
-        items.push(<Entry row={props.data[i]} />);
+        items.push(<Entry row={props.data[i]} edit={props.edit}/>);
     }
 
     return <>

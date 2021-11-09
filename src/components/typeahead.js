@@ -14,6 +14,7 @@ const TypeAhead = (props) => {
             selected={props.selected}
             onChange={props.onChange}
             onInputChange={props.onInputChange}
+            defaultSelected={props.defaultSelected}
         />;
 };
 

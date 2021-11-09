@@ -11,8 +11,22 @@ import Col from 'react-bootstrap/Col';
 import JournalEntry, { DayType, parseDayType } from "../utils/db-row";
 import TypeAhead from "./typeahead.js";
 
-const AddForm = (props: any) => {
+class AddFormProps {
+    show: boolean;
+    save: (row: JournalEntry) => void;
+    exit: () => void;
+    entry: JournalEntry;
+    categoryList: Array<string>;
+}
+
+const AddForm = (props: AddFormProps) => {
     const [alert, setAlert] = React.useState<string>();
+    const getValueOf = (field: string, fallback: any): any => {
+        if (props.entry) {
+            return props.entry[field];
+        }
+        return fallback;
+    }
 
     const amount = React.createRef<HTMLInputElement>();
     const isIncome = React.createRef<HTMLInputElement>();
@@ -22,15 +36,13 @@ const AddForm = (props: any) => {
 
     const periodType = React.createRef<HTMLSelectElement>();
 
-    const [repeats, setRepeats] = React.useState();
+    const repeats = React.createRef<HTMLInputElement>();
     const lastDay = React.createRef<HTMLInputElement>();
     
     const [category, setCategorySelections] = React.useState([]);
     const [categorySearch, setCategorySearch] = React.useState();
 
     const note = React.createRef<HTMLTextAreaElement>();
-
-    // TODO get values from props.entry to edit a record
 
     const save = (event: any) => {
         event.preventDefault();
@@ -44,13 +56,13 @@ const AddForm = (props: any) => {
         }
 
         const entry = new JournalEntry();
-        entry.id = props.id; // to support editing
+        entry.id = props.entry ? props.entry.id : -1;
         entry.isIncome = isIncome.current.checked;
         entry.from = from.current.valueAsDate;
         entry.amount = amount.current.valueAsNumber;
         entry.lengthCount = periodCount.current.valueAsNumber;
         entry.lengthType = parseDayType(periodType.current.value);
-        entry.repeats = repeats;
+        entry.repeats = repeats.current.checked;
         entry.lastDay = lastDay.current ? lastDay.current.valueAsDate : null;
         entry.category = categoryNew;
         entry.note = note.current.value;
@@ -65,7 +77,6 @@ const AddForm = (props: any) => {
         props.save(entry);
     }
     
-
     return (
     <Modal show={props.show} onHide={props.exit} animation={false}>
         <Modal.Header closeButton>
@@ -79,28 +90,28 @@ const AddForm = (props: any) => {
                         <InputGroup>
                             <InputGroup.Text>$</InputGroup.Text>
                             <FloatingLabel label="Amount">
-                                <Form.Control type="number" defaultValue={0} ref={amount} />
+                                <Form.Control type="number" defaultValue={getValueOf('amount', 0)} ref={amount} />
                             </FloatingLabel>
                         </InputGroup>
                     </Col>
                     <Col sm={5}>
-                        <Form.Check id="isIncome" ref={isIncome} label="Is Income" />
+                        <Form.Check id="isIncome" ref={isIncome} label="Is Income" defaultChecked={getValueOf('isIncome', false)} />
                     </Col>
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Start Date</Form.Label>
                     <Col sm={8}>
-                        <Form.Control type="date" ref={from} defaultValue={new Date().toISOString().slice(0, 10)} />
+                        <Form.Control type="date" ref={from} defaultValue={getValueOf('from', new Date()).toISOString().slice(0, 10)} />
                     </Col>
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
                     <Col sm={4}>
-                        <Form.Control type="number" min="0" ref={periodCount} defaultValue={1} />
+                        <Form.Control type="number" min="0" ref={periodCount} defaultValue={getValueOf('lengthCount', 1)} />
                     </Col>
                     <Col sm={8}>
-                        <Form.Select ref={periodType} defaultValue={DayType.Day}>
+                        <Form.Select ref={periodType} defaultValue={getValueOf('lengthType', DayType.Day)}>
                             <option value={DayType.Day}>Day</option>
                             <option value={DayType.Week}>Week</option>
                             <option value={DayType.Month}>Month</option>
@@ -112,24 +123,24 @@ const AddForm = (props: any) => {
                 
                 <Form.Group as={Row} className="mb-3">
                     <Col sm={4}>
-                        <Form.Check id="repeats" value={repeats} onChange={(e:any) => setRepeats(e.currentTarget.checked)} label={!repeats ? "Repeats?" : "Repeats until"} />
+                        <Form.Check id="repeats" ref={repeats} defaultChecked={getValueOf('repeats', false)} label="Repeats?" />
                     </Col>
                     <Col sm={8}>
-                        {repeats ? <Form.Control type="date" ref={lastDay} /> : null}
+                        <Form.Control type="date" ref={lastDay} defaultValue={getValueOf('lastDay', null) ? getValueOf('lastDay', null).toISOString().slice(0, 10) : null} />
                     </Col>
                 </Form.Group>
                 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Category</Form.Label>
                     <Col sm={8}>
-                        <TypeAhead id="categoryButBetter" options={['TODO', 'bbb', 'tree']} selected={category} onChange={setCategorySelections} onInputChange={setCategorySearch} />
+                        <TypeAhead id="categoryButBetter" options={props.categoryList || []} defaultSelected={[getValueOf('category', '')]} onChange={setCategorySelections} onInputChange={setCategorySearch} />
                     </Col>
                 </Form.Group>
                 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Free text</Form.Label>
                     <Col sm={8}>
-                        <Form.Control ref={note} as="textarea"/>
+                        <Form.Control ref={note} as="textarea" defaultValue={getValueOf('note', null)} />
                     </Col>
                 </Form.Group>
             </Form>
