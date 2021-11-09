@@ -5,9 +5,9 @@ import AwsS3Service, {AwsS3Config} from "../utils/s3-controller";
 import DataService from "../utils/db-repo";
 import JournalEntry from "../utils/db-row";
 import { graphql } from "gatsby";
+import Calc from "../utils/calc";
 
-export const pageQuery = graphql`
-query a { site { siteMetadata { awsFileName } } }`
+export const pageQuery = graphql`query a { site { siteMetadata { awsFileName } } }`
 
 
 const IndexPage = (props: any) => {
@@ -20,12 +20,15 @@ const IndexPage = (props: any) => {
   const login = function(creds: AwsS3Config) {
     const s3Service = new AwsS3Service(creds);
     database.current = new DataService(s3Service, props.data.site.siteMetadata.awsFileName);
-    database.current.load(() => {
+    database.current.load((data: Array<JournalEntry>) => {
       setLoggedIn(true);
+      calc.current = new Calc(data);
     }, (err) => { alert(err); });
   }
+
+  const calc : React.MutableRefObject<Calc> = React.useRef(null);
   
-  if (loggedIn && database.current == null) {
+  if (loggedIn && database.current == null && calc.current == null) {
     return (<>Loading...</>);
   }
 
@@ -35,7 +38,7 @@ const IndexPage = (props: any) => {
 
   return (
   <>
-    <MainForm data={database.current.getRaw()} addRow={addRow} />
+    <MainForm data={database.current.getRaw()} addRow={addRow} calc={calc.current} />
   </>
   );
 };

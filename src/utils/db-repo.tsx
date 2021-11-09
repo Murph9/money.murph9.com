@@ -12,7 +12,7 @@ export default class DataService {
         this.fileName = fileName;
     }
 
-    load(success: () => void, failure: (err: string) => void) {
+    load(success: (data: Array<JournalEntry>) => void, failure: (err: string) => void) {
         const that = this;
         this.awsService.getFile(this.fileName, function(result: any) {
             console.log("Entries: " + result.obj.length);
@@ -30,7 +30,7 @@ export default class DataService {
                 entry.note = x['note'];
                 return entry;
             });
-            success();
+            success(that.rawData);
         }, (message: string) => failure(message));
     }
 
