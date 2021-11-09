@@ -29,6 +29,8 @@ export default class DataService {
                 entry.lengthType = parseDayType(x['lengthType']);
                 entry.note = x['note'];
                 return entry;
+            }).sort((x: JournalEntry, y: JournalEntry) => {
+                return +x.from - +y.from;
             });
             success(that.rawData);
         }, (message: string) => failure(message));
