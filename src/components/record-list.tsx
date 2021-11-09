@@ -1,5 +1,5 @@
 import * as React from "react";
-import JournalEntry from "../utils/db-row";
+import JournalEntry, { DayType } from "../utils/db-row";
 import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
 
@@ -18,7 +18,7 @@ const Entry = (props: EntryProps) => {
         <td>{props.row.category}</td>
         <td>${props.row.amount}</td>
         <td>{props.row.from.toLocaleDateString()}</td>
-        <td>{props.row.calcLastDay().toLocaleDateString()}</td>
+        <td>{props.row.lengthCount} * {DayType[props.row.lengthType]}</td>
     </tr>;
 }
 

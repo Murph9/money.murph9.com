@@ -18,8 +18,8 @@ const BarGraphView = (props: BarGraphViewProps) => {
         day.setHours(0,0,0,0);
         DateLib.addDays(day, i);
         const entries = [];
-        for (const row of props.calc.rowsForDay(day)){
-            entries.push(<div>{row.calcPerDay().toPrecision(2)} | {row.category}</div>);
+        for (const row of props.calc.rowsForDay(day)) {
+            entries.push(<div>${row.calcPerDay().toFixed(2)} | {row.category}</div>);
         }
         bars.push(<Col key={i}>{day.toDateString()}
             <div>{entries}</div></Col>);
