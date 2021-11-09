@@ -26,20 +26,19 @@ const MainForm = (props: any) => {
     const [showToast, setShowToast] = React.useState("");
 
     const [list, setList] = React.useState(false);
-    const handleList = () => setList(true);
 
     return (<>
         <Button variant="primary" onClick={handleShow}>Add</Button>
         <AddForm show={add} save={handleClose} exit={handleExit} entry={new JournalEntry()}/>
         
-        <Button variant="secondary" onClick={handleList}>View All Records</Button>
-        <RecordList data={props.data} />
+        <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
+        {list ? <RecordList data={props.data} /> : null}
 
         <ToastContainer className="p-3" position={'top-center'}>
             <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={3000} autohide bg='snfo'>
                 <Toast.Header>
                     <strong className="me-auto">{showToast}</strong>
-                    <small>(just then)</small>
+                    <small>(just now)</small>
                 </Toast.Header>
             </Toast>
         </ToastContainer>
