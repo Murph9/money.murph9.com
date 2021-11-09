@@ -14,11 +14,14 @@ type EntryProps = {
 }
 
 const Entry = (props: EntryProps) => {
+    const perDay = (props.row.lengthType != DayType.Day || props.row.lengthCount != 1) ? ` ($${props.row.calcPerDay().toFixed(2)}/day)` : null;
+    const length = props.row.repeats && !props.row.lastDay ? 'inf' : `${props.row.lengthCount} * ${DayType[props.row.lengthType]}`;
     return <tr key={props.row.id}>
         <td>{props.row.category}</td>
-        <td>${props.row.amount}</td>
+        <td>${props.row.amount.toFixed(2)}{perDay}</td>
         <td>{props.row.from.toLocaleDateString()}</td>
-        <td>{props.row.lengthCount} * {DayType[props.row.lengthType]}</td>
+        <td>{length}</td>
+        <td>Edit TODO</td>
     </tr>;
 }
 
