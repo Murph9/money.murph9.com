@@ -36,7 +36,7 @@ const AddForm = (props: any) => {
         event.preventDefault();
 
         let categoryNew = category.length < 1 ? categorySearch : category[0];
-        if (categoryNew.hasOwnProperty('label'))
+        if (categoryNew && categoryNew.hasOwnProperty('label'))
             categoryNew = categoryNew.label;
         if (!categoryNew) {
             setAlert("Please set a category");
