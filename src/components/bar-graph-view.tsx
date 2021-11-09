@@ -14,12 +14,12 @@ const BarGraphView = (props: BarGraphViewProps) => {
     
     const bars = [];
     for (let i = -3; i < -3+6; i++) {
-        const day = new Date();
+        const day = DateLib.setToMonday(new Date());
         day.setHours(0,0,0,0);
-        DateLib.addDays(day, i);
+        DateLib.addDays(day, i*7);
         const entries = [];
-        for (const row of props.calc.rowsForDay(day)) {
-            entries.push(<div>${row.calcPerDay().toFixed(2)} | {row.category}</div>);
+        for (const row of props.calc.rowsForWeek(day)) {
+            entries.push(<div>${row[1].toFixed(2)} | {row[0]}</div>);
         }
         bars.push(<Col key={i}>{day.toDateString()}
             <div>{entries}</div></Col>);

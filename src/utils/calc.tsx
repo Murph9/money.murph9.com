@@ -1,4 +1,5 @@
 import JournalEntry, { DayType } from '../utils/db-row';
+import { DateLib } from './date-helpers';
 
 class Range {
     row: JournalEntry;
@@ -39,9 +40,12 @@ export default class Calc {
     }
 
     totalFor(type: DayType, startDate: Date): number {
-        if (type == DayType.Day)
-            return this.rowsForDay(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
-        return null;
+        switch (type) {
+            case DayType.Day:
+                return this.rowsForDay(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+            default:
+                return null;
+        }
     }
 
     rowsForDay(startDate: Date): Array<JournalEntry> {
@@ -53,5 +57,27 @@ export default class Calc {
             list.push(range.row);
         }
         return list;
+    }
+
+    rowsForWeek(startDate: Date): Map<string, number> {
+        var date = DateLib.setToMonday(new Date(startDate));
+
+        const list = [
+            ...this.rowsForDay(date),
+            ...this.rowsForDay(DateLib.addDays(date, 1)),
+            ...this.rowsForDay(DateLib.addDays(date, 1)),
+            ...this.rowsForDay(DateLib.addDays(date, 1)),
+            ...this.rowsForDay(DateLib.addDays(date, 1)),
+            ...this.rowsForDay(DateLib.addDays(date, 1)),
+            ...this.rowsForDay(DateLib.addDays(date, 1))
+        ];
+        const map = new Map<string, number>();
+        for (const row of list) {
+            if (!map.has(row.category))
+                map.set(row.category, row.calcPerDay());
+            else
+                map.set(row.category, map.get(row.category) + row.calcPerDay());
+        }
+        return map;
     }
 }
