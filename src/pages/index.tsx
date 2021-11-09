@@ -10,40 +10,58 @@ import Calc from "../utils/calc";
 export const pageQuery = graphql`query a { site { siteMetadata { awsFileName } } }`
 
 
-const IndexPage = (props: any) => {
-  const [loggedIn, setLoggedIn] = React.useState(false);
-  const addRow = (row: JournalEntry) => {
-    database.current.save(row, (a: object) => {}, (message: string) => { alert(message);});
+interface IIndexPageState {
+  loggedIn: boolean;
+  calc: Calc;
+  database: DataService;
+}
+
+export default class IndexPage extends React.Component<any, IIndexPageState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      loggedIn: false,
+      calc: null,
+      database: null,
+    };
+
+    this.setLoggedIn = this.setLoggedIn.bind(this);
+    this.addRow = this.addRow.bind(this);
+    this.login = this.login.bind(this);
+  }
+
+  setLoggedIn(value: boolean): void {
+    this.setState({ loggedIn: value });
+  }
+  
+  addRow(row: JournalEntry) {
+    this.state.database.save(row, () => {
+      this.setState({calc: this.state.database.getCalc()});
+    }, (message: string) => { alert(message);});
   };
 
-  const database : React.MutableRefObject<DataService> = React.useRef(null);
-  const login = function(creds: AwsS3Config) {
+  login(creds: AwsS3Config) {
     const s3Service = new AwsS3Service(creds);
-    database.current = new DataService(s3Service, props.data.site.siteMetadata.awsFileName);
-    database.current.load((data: Array<JournalEntry>) => {
-      setLoggedIn(true);
-      setCalc(new Calc(data));
+    const database = new DataService(s3Service, this.props.data.site.siteMetadata.awsFileName);
+    database.load(() => {
+      this.setState({calc: database.getCalc(), database: database, loggedIn: true });
     }, (err) => { alert(err); });
   }
-  const [calc, setCalc] = React.useState<Calc>(null);
-    
-  if (loggedIn && database.current == null) {
-    return (<>Loading...</>);
+   
+  render() {
+    if (this.state.loggedIn && (this.state.database == null || this.state.calc == null)) {
+      return (<>Loading...</>);
+    }
+
+    if (!this.state.loggedIn) {
+      return (<LoginForm callback={this.login} />);
+    }
+
+    return (
+    <>
+      <MainForm data={this.state.database.getRaw()} addRow={this.addRow} calc={this.state.calc} />
+    </>
+    );
   }
+}
 
-  if (loggedIn && calc == null) {
-    return (<>Generating...</>);
-  }
-
-  if (!loggedIn) {
-    return (<LoginForm callback={login} />);
-  }
-
-  return (
-  <>
-    <MainForm data={database.current.getRaw()} addRow={addRow} calc={calc} />
-  </>
-  );
-};
-
-export default IndexPage;

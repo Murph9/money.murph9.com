@@ -1,5 +1,6 @@
 import JournalEntry, {parseDayType} from "./db-row";
 import AwsS3Service from "./s3-controller";
+import Calc from '../utils/calc';
 
 export default class DataService {
     
@@ -12,7 +13,11 @@ export default class DataService {
         this.fileName = fileName;
     }
 
-    load(success: (data: Array<JournalEntry>) => void, failure: (err: string) => void) {
+    getCalc(): Calc {
+        return new Calc(this.rawData);
+    }
+
+    load(success: () => void, failure: (err: string) => void) {
         const that = this;
         this.awsService.getFile(this.fileName, function(result: any) {
             console.log("Entries: " + result.obj.length);
@@ -32,7 +37,8 @@ export default class DataService {
             }).sort((x: JournalEntry, y: JournalEntry) => {
                 return +x.from - +y.from;
             });
-            success(that.rawData);
+
+            success();
         }, (message: string) => failure(message));
     }
 
@@ -44,7 +50,7 @@ export default class DataService {
         return this.rawData;
     }
 
-    save(newData: JournalEntry, success: (x: any) => void, failure: (x: string) => void) {
+    save(newData: JournalEntry, success: () => void, failure: (x: string) => void) {
         
         if (newData.id >= 0 && this.rawData.filter(x => x.id == newData.id)) {
             // update
@@ -56,9 +62,7 @@ export default class DataService {
         }
 
         const that = this;
-        this.awsService.saveFile(this.fileName, this.rawData, function(response: object) {
-            success(response);
-        }, function(response: string) {
+        this.awsService.saveFile(this.fileName, this.rawData, success, function(response: string) {
             that.rawData = that.rawData.filter(x => x != newData); // revert save, show message
             failure(response);
         });
