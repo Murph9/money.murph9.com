@@ -20,7 +20,7 @@ class BarGraphViewProps {
 
 const BarGraphView = (props: BarGraphViewProps) => {
 
-    const type = DayType.Day;
+    const type = DayType.Month;
     const futureCount = 2;
     const barCount = 7;
     const graphOffset = -barCount + 1 + futureCount;

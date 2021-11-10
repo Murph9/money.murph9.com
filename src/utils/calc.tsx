@@ -46,6 +46,10 @@ export default class Calc {
                 return this.rowsForDay(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
             case DayType.Week:
                 return this.rowsForWeek(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+            case DayType.Month:
+                return this.rowsForMonth(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+            case DayType.Year:
+                return this.rowsForYear(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
             default:
                 return null;
         }
@@ -74,6 +78,26 @@ export default class Calc {
             ...this.rowsForDay(DateLib.addDays(date, 1)),
             ...this.rowsForDay(DateLib.addDays(date, 1))
         ];
+    }
+
+    rowsForMonth(startDate: Date): Array<JournalEntry> {
+        var date = DayTypeLib.setToStart(new Date(startDate), DayType.Month);
+        const month = date.getMonth();
+        const array = this.rowsForDay(date);
+        while (date.getMonth() == month) {
+            array.push(...this.rowsForDay(DateLib.addDays(date, 1)));
+        }
+        return array;
+    }
+
+    rowsForYear(startDate: Date): Array<JournalEntry> {
+        var date = DayTypeLib.setToStart(new Date(startDate), DayType.Year);
+        const year = date.getFullYear();
+        const array = this.rowsForMonth(date);
+        while (date.getFullYear() == year) {
+            array.push(...this.rowsForMonth(DateLib.addMonths(date, 1)));
+        }
+        return array;
     }
     
     reportForWeek(startDate: Date): Map<string, number> {
