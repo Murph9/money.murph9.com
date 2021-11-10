@@ -11,7 +11,7 @@ import Col from 'react-bootstrap/Col';
 import JournalEntry, { DayType, parseDayType } from "../utils/db-row";
 import TypeAhead from "./typeahead.js";
 
-class AddFormProps {
+class EditFormProps {
     show: boolean;
     save: (row: JournalEntry) => void;
     exit: () => void;
@@ -19,7 +19,7 @@ class AddFormProps {
     categoryList: Array<string>;
 }
 
-const AddForm = (props: AddFormProps) => {
+const EditForm = (props: EditFormProps) => {
     const [alert, setAlert] = React.useState<string>();
     const getValueOf = (field: string, fallback: any): any => {
         if (props.entry) {
@@ -152,4 +152,4 @@ const AddForm = (props: AddFormProps) => {
     </Modal>
     );
 };
-export default AddForm;
+export default EditForm;

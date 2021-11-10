@@ -5,7 +5,7 @@ import Toast from 'react-bootstrap/Toast';
 
 import JournalEntry from "../utils/db-row";
 import Calc from "../utils/calc";
-import AddForm from './add-form';
+import EditForm from './edit-form';
 import RecordList from "./record-list";
 import BarGraphView from './bar-graph-view';
 
@@ -16,10 +16,10 @@ class MainFormProps {
 }
 
 const MainForm = (props: MainFormProps) => {
-    const [add, setAdd] = React.useState(false);
+    const [edit, setEdit] = React.useState(false);
     
-    const handleAddClose = (obj: JournalEntry) => {
-        setAdd(false);
+    const handleEditClose = (obj: JournalEntry) => {
+        setEdit(false);
         if (obj != null && !(obj instanceof JournalEntry)) {
             throw new Error("Returned object was not the right type " + obj);
         }
@@ -30,7 +30,7 @@ const MainForm = (props: MainFormProps) => {
     }
     const handleAddExit = () => {
         setShowToast("Record not saved");
-        setAdd(false);
+        setEdit(false);
         addEditEntry(null);
     };
 
@@ -42,12 +42,12 @@ const MainForm = (props: MainFormProps) => {
         if (!row)
             alert('journal entry not set during edit');
         addEditEntry(row);
-        setAdd(true);
+        setEdit(true);
     }
 
     return (<>
-        <Button variant="primary" onClick={() => setAdd(true)}>Add</Button>
-        <AddForm show={add} save={handleAddClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} />
+        <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
+        <EditForm show={edit} save={handleEditClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} />
 
         <BarGraphView calc={props.calc} />
 
