@@ -29,7 +29,7 @@ const Entry = (props: EntryProps) => {
     </tr>;
 }
 
-const RecordList = (props: RecordListProps) => {
+const FullRecordList = (props: RecordListProps) => {
     const [pageNum, setPageNum] = React.useState(0);
 
     const pages = props.data.length/pageSize;
@@ -65,4 +65,4 @@ const RecordList = (props: RecordListProps) => {
     </>;
 }
 
-export default RecordList;
+export default FullRecordList;

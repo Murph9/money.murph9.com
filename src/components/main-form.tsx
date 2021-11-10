@@ -6,7 +6,7 @@ import Toast from 'react-bootstrap/Toast';
 import JournalEntry from "../utils/db-row";
 import Calc from "../utils/calc";
 import EditForm from './edit-form';
-import RecordList from "./record-list";
+import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';
 
 class MainFormProps {
@@ -59,7 +59,7 @@ const MainForm = (props: MainFormProps) => {
         <BarGraphView calc={props.calc} />
 
         <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
-        {list ? <RecordList data={props.data} edit={handleEditEntry}/> : null}
+        {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}
 
         <ToastContainer className="p-3" position={'top-center'}>
             <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={3000} autohide bg='snfo'>
