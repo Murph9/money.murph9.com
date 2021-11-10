@@ -29,7 +29,7 @@ const MainForm = (props: MainFormProps) => {
         addEditEntry(null);
         props.editRow(obj);
     }
-    const handleAddExit = () => {
+    const handleEditExit = () => {
         setShowToast("Record not saved");
         setEdit(false);
         addEditEntry(null);
@@ -49,11 +49,12 @@ const MainForm = (props: MainFormProps) => {
     const handleDelete = (row: JournalEntry) => {
         props.deleteRow(row);
         setEdit(false);
+        addEditEntry(null);
     }
 
     return (<>
         <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-        <EditForm key={new Date().getTime()} show={edit} save={handleEditClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} delete={handleDelete} />
+        <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} save={handleEditClose} exit={handleEditExit} delete={handleDelete} />
 
         <BarGraphView calc={props.calc} />
 

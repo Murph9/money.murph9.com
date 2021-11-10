@@ -45,6 +45,8 @@ const EditForm = (props: EditFormProps) => {
 
     const note = React.createRef<HTMLTextAreaElement>();
 
+    const [deleteConfirm, setDeleteConfirm] = React.useState(false);
+
     const save = (event: any) => {
         event.preventDefault();
 
@@ -147,9 +149,10 @@ const EditForm = (props: EditFormProps) => {
             </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={props.exit}>Close</Button>
-          <Button variant="primary" onClick={save}>Save Changes</Button>
-          {props.entry && <Button variant="danger" onClick={() => props.delete(props.entry)}>Delete</Button>}
+            {props.entry && deleteConfirm && <Button variant="danger" onClick={() => props.delete(props.entry)}>REALLY DELETE?</Button>}
+            <Button variant="secondary" onClick={props.exit}>Close</Button>
+            <Button variant="primary" onClick={save}>Save Changes</Button>
+            {props.entry && <Button variant="danger" disabled={deleteConfirm} onClick={() => setDeleteConfirm(true)}>Delete</Button>}
         </Modal.Footer>
     </Modal>
     );
