@@ -41,15 +41,20 @@ export default class Calc {
     }
 
     totalFor(type: DayType, startDate: Date): number {
+        const rows = this.rowsFor(type, startDate);
+        return rows.reduce((total, x) => total + x.calcPerDay(), 0);
+    }
+
+    rowsFor(type: DayType, startDate: Date): Array<JournalEntry> {
         switch (type) {
             case DayType.Day:
-                return this.rowsForDay(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+                return this.rowsForDay(startDate);
             case DayType.Week:
-                return this.rowsForWeek(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+                return this.rowsForWeek(startDate);
             case DayType.Month:
-                return this.rowsForMonth(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+                return this.rowsForMonth(startDate);
             case DayType.Year:
-                return this.rowsForYear(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+                return this.rowsForYear(startDate);
             default:
                 return null;
         }
@@ -99,10 +104,10 @@ export default class Calc {
         }
         return array;
     }
-    
-    reportForWeek(startDate: Date): Map<string, number> {
-        const list = this.rowsForWeek(startDate);
-        
+
+    reportFor(type: DayType, startDate: Date): Map<string, number> {
+        const list = this.rowsFor(type, startDate);
+
         const map = new Map<string, number>();
         for (const row of list) {
             if (!map.has(row.category))

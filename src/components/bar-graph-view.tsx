@@ -31,7 +31,7 @@ const BarGraphView = (props: BarGraphViewProps) => {
     for (let i = 0; i < barCount; i++) {
         const periodStart = DayTypeLib.offsetDateBy(now, type, i + graphOffset);
         const value = props.calc.totalFor(type, periodStart);
-        values.push({ name: periodStart.toLocaleDateString(), amount: value, amountFormatted: `$${value.toFixed(2)}` });
+        values.push({ name: periodStart.toLocaleDateString(), amount: value, amountFormatted: `$${value.toFixed(2)}`, date: periodStart });
     }
     
     //TODO calc fill colour based on currentIndex
@@ -43,8 +43,7 @@ const BarGraphView = (props: BarGraphViewProps) => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <ReferenceLine y={0} stroke="#000" />
                 <Bar dataKey="amount" fill="#8884d8" onClick={(data, index) => {
-                    console.log(data[index]);
-                    //props.viewReport(null, null);
+                    props.viewReport(type, data.date);
                 }}>
                     {values.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? 'green': 'red'} strokeWidth={index === currentIndex ? 1 : 0} stroke='black'/>

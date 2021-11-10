@@ -8,6 +8,7 @@ import Calc from "../utils/calc";
 import EditForm from './edit-form';
 import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';
+import { DayType } from "../utils/day-type";
 
 class MainFormProps {
     data: Array<JournalEntry>;
@@ -52,11 +53,18 @@ const MainForm = (props: MainFormProps) => {
         addEditEntry(null);
     }
 
+    const [report, setReport] = React.useState<Map<string, number>>(null);
+
+    const viewReportFor = (type: DayType, date: Date) => {
+        setReport(props.calc.reportFor(type, date));
+    }
+
     return (<>
         <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
         <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} save={handleEditClose} exit={handleEditExit} delete={handleDelete} />
 
-        <BarGraphView calc={props.calc} />
+        <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
+        {report && <div>{JSON.stringify(Array.from(report))}</div>}
 
         <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
         {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}
