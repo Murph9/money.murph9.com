@@ -1,46 +1,40 @@
 import * as React from "react";
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Calc from "../utils/calc";
-import { DayType } from "../utils/db-row";
-import { DateLib } from "../utils/date-helpers";
+import DayTypeLib, { DayType } from "../utils/day-type";
 
 import {
     BarChart,
     Bar,
-    YAxis,
     CartesianGrid,
     LabelList,
     ReferenceLine,
     Cell,
-    ResponsiveContainer,
   } from 'recharts';
 
 class BarGraphViewProps {
     calc: Calc;
+    viewReport: (type: DayType, date: Date) => void;
 }
 
 const BarGraphView = (props: BarGraphViewProps) => {
+
+    const type = DayType.Day;
+    const futureCount = 2;
+    const barCount = 7;
+    const graphOffset = -barCount + 1 + futureCount;
+    const currentIndex = barCount-futureCount-1;
     
     const values = [];
-    const bars = [];
-    for (let i = -3; i < -3+7; i++) {
-        const day = DateLib.setToMonday(new Date());
-        day.setHours(0,0,0,0);
-        DateLib.addDays(day, i*7);
-        const entries = [];
-        let total = 0;
-        for (const row of props.calc.rowsForWeek(day)) {
-            entries.push(<div>${row[1].toFixed(2)} | {row[0]}</div>);
-            total += row[1];
-        }
-        bars.push(<Col key={i}>{day.toDateString()}
-            <div>{entries}</div></Col>);
-
-        values.push({ name: day.toLocaleDateString(), amount: total, amountFormatted: `$${total.toFixed(2)}` });
+    const now = DayTypeLib.setToStart(new Date(), type);
+    for (let i = 0; i < barCount; i++) {
+        const periodStart = DayTypeLib.offsetDateBy(now, type, i + graphOffset);
+        const value = props.calc.totalFor(type, periodStart);
+        values.push({ name: periodStart.toLocaleDateString(), amount: value, amountFormatted: `$${value.toFixed(2)}` });
     }
     
+    //TODO calc fill colour based on currentIndex
 
     return (<>
     <Container>
@@ -48,17 +42,17 @@ const BarGraphView = (props: BarGraphViewProps) => {
             <BarChart data={values} height={300} width={600} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <ReferenceLine y={0} stroke="#000" />
-                <Bar dataKey="amount" fill="#8884d8" onClick={() => {}}>
+                <Bar dataKey="amount" fill="#8884d8" onClick={(data, index) => {
+                    console.log(data[index]);
+                    //props.viewReport(null, null);
+                }}>
                     {values.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? 'green': 'red'} strokeWidth={index === 3 ? 1 : 0} stroke='black'/>
+                        <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? 'green': 'red'} strokeWidth={index === currentIndex ? 1 : 0} stroke='black'/>
                     ))}
                     <LabelList dataKey="name" position="bottom" />
                     <LabelList dataKey="amountFormatted" position="top" />
                 </Bar>
             </BarChart>
-        </Row>
-        <Row>
-            {bars}
         </Row>
     </Container>
     </>

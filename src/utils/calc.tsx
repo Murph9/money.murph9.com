@@ -44,6 +44,8 @@ export default class Calc {
         switch (type) {
             case DayType.Day:
                 return this.rowsForDay(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
+            case DayType.Week:
+                return this.rowsForWeek(startDate).reduce((total, x) => total + x.calcPerDay(), 0);
             default:
                 return null;
         }
@@ -60,10 +62,10 @@ export default class Calc {
         return list;
     }
 
-    rowsForWeek(startDate: Date): Map<string, number> {
+    rowsForWeek(startDate: Date): Array<JournalEntry> {
         var date = DayTypeLib.setToMonday(new Date(startDate));
 
-        const list = [
+        return [
             ...this.rowsForDay(date),
             ...this.rowsForDay(DateLib.addDays(date, 1)),
             ...this.rowsForDay(DateLib.addDays(date, 1)),
@@ -72,6 +74,11 @@ export default class Calc {
             ...this.rowsForDay(DateLib.addDays(date, 1)),
             ...this.rowsForDay(DateLib.addDays(date, 1))
         ];
+    }
+    
+    reportForWeek(startDate: Date): Map<string, number> {
+        const list = this.rowsForWeek(startDate);
+        
         const map = new Map<string, number>();
         for (const row of list) {
             if (!map.has(row.category))

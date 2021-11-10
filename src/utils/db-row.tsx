@@ -39,7 +39,7 @@ export default class JournalEntry {
     }
 
     calcFirstPeriodEndDay() {
-        const result = DayTypeLib.offsetDateBy(this.from, this.lengthType, 1);
+        const result = DayTypeLib.offsetDateBy(this.from, this.lengthType, this.lengthCount);
         DateLib.addDays(result, -1);
         return result;
     }
