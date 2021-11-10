@@ -67,4 +67,20 @@ export default class DataService {
             failure(response);
         });
     }
+
+    delete(row: JournalEntry, success: () => void, failure: (x: string) => void) {
+        if (row.id < 0 || this.rawData.filter(x => x.id == row.id).length < 1) {
+            failure("No id found for: " + row.id);
+            return;
+        }
+
+        console.log("Removing record: ", row);
+        this.rawData = this.rawData.filter(x => x.id != row.id);
+
+        const that = this;
+        this.awsService.saveFile(this.fileName, this.rawData, success, function(response: string) {
+            that.rawData.push(row); // revert save, show message
+            failure(response);
+        });
+    }
 }
