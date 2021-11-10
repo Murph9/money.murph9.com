@@ -53,7 +53,7 @@ const MainForm = (props: MainFormProps) => {
 
     return (<>
         <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-        <EditForm show={edit} save={handleEditClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} delete={handleDelete} />
+        <EditForm key={new Date().getTime()} show={edit} save={handleEditClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} delete={handleDelete} />
 
         <BarGraphView calc={props.calc} />
 
