@@ -11,8 +11,9 @@ import BarGraphView from './bar-graph-view';
 
 class MainFormProps {
     data: Array<JournalEntry>;
-    addRow: (row: JournalEntry) => void;
     calc: Calc;
+    editRow: (row: JournalEntry) => void;
+    deleteRow: (row: JournalEntry) => void;
 }
 
 const MainForm = (props: MainFormProps) => {
@@ -26,7 +27,7 @@ const MainForm = (props: MainFormProps) => {
 
         setShowToast("Record saved, yay");
         addEditEntry(null);
-        props.addRow(obj);
+        props.editRow(obj);
     }
     const handleAddExit = () => {
         setShowToast("Record not saved");
@@ -45,9 +46,14 @@ const MainForm = (props: MainFormProps) => {
         setEdit(true);
     }
 
+    const handleDelete = (row: JournalEntry) => {
+        props.deleteRow(row);
+        setEdit(false);
+    }
+
     return (<>
         <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-        <EditForm show={edit} save={handleEditClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} />
+        <EditForm show={edit} save={handleEditClose} exit={handleAddExit} entry={editEntry} categoryList={props.calc.categories} delete={handleDelete} />
 
         <BarGraphView calc={props.calc} />
 

@@ -26,7 +26,8 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     };
 
     this.setLoggedIn = this.setLoggedIn.bind(this);
-    this.addRow = this.addRow.bind(this);
+    this.editRow = this.editRow.bind(this);
+    this.deleteRow = this.deleteRow.bind(this);
     this.login = this.login.bind(this);
   }
 
@@ -34,11 +35,17 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     this.setState({ loggedIn: value });
   }
   
-  addRow(row: JournalEntry) {
+  editRow(row: JournalEntry): void {
     this.state.database.save(row, () => {
       this.setState({calc: this.state.database.getCalc()});
-    }, (message: string) => { alert(message);});
+    }, (message: string) => alert(message));
   };
+
+  deleteRow(row: JournalEntry): void {
+    this.state.database.delete(row, () => {
+      this.setState({calc: this.state.database.getCalc()});
+    }, (message: string) => alert(message));
+  }
 
   login(creds: AwsS3Config) {
     const s3Service = new AwsS3Service(creds);
@@ -59,7 +66,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
 
     return (
     <>
-      <MainForm data={this.state.database.getRaw()} addRow={this.addRow} calc={this.state.calc} />
+      <MainForm data={this.state.database.getRaw()} calc={this.state.calc} editRow={this.editRow} deleteRow={this.deleteRow} />
     </>
     );
   }

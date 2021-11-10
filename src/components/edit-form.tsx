@@ -15,6 +15,7 @@ class EditFormProps {
     show: boolean;
     save: (row: JournalEntry) => void;
     exit: () => void;
+    delete: (row: JournalEntry) => void;
     entry: JournalEntry;
     categoryList: Array<string>;
 }
@@ -148,6 +149,7 @@ const EditForm = (props: EditFormProps) => {
         <Modal.Footer>
           <Button variant="secondary" onClick={props.exit}>Close</Button>
           <Button variant="primary" onClick={save}>Save Changes</Button>
+          {props.entry && <Button variant="danger" onClick={() => props.delete(props.entry)}>Delete</Button>}
         </Modal.Footer>
     </Modal>
     );
