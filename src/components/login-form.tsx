@@ -5,6 +5,9 @@ import { AwsS3Config } from "../utils/s3-controller";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 const getFromLocalStorage = function(key: string, fallback: string) {
+    if (typeof window === 'undefined')
+        return fallback;
+    
     const result = window.localStorage.getItem(key)
     if (result)
         return result;
@@ -21,8 +24,10 @@ const LoginForm = (props: any) => {
     const submit = function(evt: any) {
         evt.preventDefault();
 
-        localStorage.setItem("bucket", bucket.current.value);
-        localStorage.setItem("region", region.current.value);
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem("bucket", bucket.current.value);
+            window.localStorage.setItem("region", region.current.value);
+        }
 
         const creds = new AwsS3Config();
         creds.apiKey = apiKey.current.value;
