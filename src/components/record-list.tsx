@@ -1,5 +1,6 @@
 import * as React from "react";
-import JournalEntry, { DayType } from "../utils/db-row";
+import JournalEntry from "../utils/db-row";
+import { DayType } from "../utils/day-type";
 import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';

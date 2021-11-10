@@ -1,4 +1,5 @@
-import JournalEntry, { DayType } from '../utils/db-row';
+import JournalEntry from '../utils/db-row';
+import DayTypeLib, { DayType } from "../utils/day-type";
 import { DateLib } from './date-helpers';
 
 class Range {
@@ -60,7 +61,7 @@ export default class Calc {
     }
 
     rowsForWeek(startDate: Date): Map<string, number> {
-        var date = DateLib.setToMonday(new Date(startDate));
+        var date = DayTypeLib.setToMonday(new Date(startDate));
 
         const list = [
             ...this.rowsForDay(date),

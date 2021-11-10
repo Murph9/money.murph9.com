@@ -1,5 +1,3 @@
-import { DateImported } from "aws-sdk/clients/transfer";
-
 export const DateLib = {
     treatAsUTC: function(date: Date) {
         var result = new Date(date);
@@ -20,12 +18,6 @@ export const DateLib = {
     },
     addYears: function(date: Date, count: number): Date {
         date.setFullYear(date.getFullYear() + count);
-        return date;
-    },
-    setToMonday(date: DateImported) {
-        var day = date.getDay() || 7;  
-        if (day !== 1) 
-            date.setHours(-24 * (day - 1)); 
         return date;
     }
 };

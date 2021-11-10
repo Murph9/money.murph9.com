@@ -1,36 +1,5 @@
 import { DateLib } from "./date-helpers";
-
-export enum DayType {
-    None,
-
-    Day,
-    Week,
-    Month,
-    Quarter,
-    Year
-}
-export const parseDayType = function(str: string): DayType {
-    if (!str)
-        return DayType.None;
-    
-    switch(str.toString().toLowerCase()) {
-        case '0': case 'n': case 'none':
-            return DayType.None;
-        case '1': case 'day': case 'd':
-            return DayType.Day;
-        case '2': case 'w': case 'week':
-            return DayType.Week;
-        case '3': case 'm': case 'month':
-            return DayType.Month;
-        case '4': case 'q': case 'quarter':
-            return DayType.Quarter;
-        case '5': case 'y': case 'year':
-            return DayType.Year;
-    }
-
-    throw new Error("AAAA no type found for: " + str);
-};
-
+import DayTypeLib, { DayType } from "./day-type";
 
 export default class JournalEntry {
     id: number = -1;
@@ -70,27 +39,7 @@ export default class JournalEntry {
     }
 
     calcFirstPeriodEndDay() {
-        const result = new Date(this.from);
-        switch (this.lengthType) {
-            case DayType.Day:
-                DateLib.addDays(result, this.lengthCount);
-                break;
-            case DayType.Week:
-                DateLib.addDays(result, this.lengthCount * 7);
-                break;
-            case DayType.Month:
-                DateLib.addMonths(result, this.lengthCount);
-                break;
-            case DayType.Quarter:
-                DateLib.addMonths(result, this.lengthCount * 3);
-                break;
-            case DayType.Year:
-                DateLib.addYears(result, this.lengthCount);
-                break;
-            default:
-                throw new Error("huh, no length type: " + this.lengthType);
-        }
-
+        const result = DayTypeLib.offsetDateBy(this.from, this.lengthType, 1);
         DateLib.addDays(result, -1);
         return result;
     }

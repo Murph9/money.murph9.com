@@ -1,4 +1,5 @@
-import JournalEntry, {parseDayType} from "./db-row";
+import JournalEntry from "./db-row";
+import DayTypeLib from "./day-type";
 import AwsS3Service from "./s3-controller";
 import Calc from '../utils/calc';
 
@@ -31,7 +32,7 @@ export default class DataService {
                 entry.isIncome = x['isIncome'];
                 entry.lastDay = x['lastDay'] ? new Date(Date.parse(x['lastDay'])) : null
                 entry.lengthCount = x['lengthCount'];
-                entry.lengthType = parseDayType(x['lengthType']);
+                entry.lengthType = DayTypeLib.parseDayType(x['lengthType']);
                 entry.note = x['note'];
                 return entry;
             }).sort((x: JournalEntry, y: JournalEntry) => {

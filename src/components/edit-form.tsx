@@ -8,7 +8,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import JournalEntry, { DayType, parseDayType } from "../utils/db-row";
+import JournalEntry from "../utils/db-row";
+import DayTypeLib, { DayType } from "../utils/day-type";
 import TypeAhead from "./typeahead.js";
 
 class EditFormProps {
@@ -64,7 +65,7 @@ const EditForm = (props: EditFormProps) => {
         entry.from = from.current.valueAsDate;
         entry.amount = amount.current.valueAsNumber;
         entry.lengthCount = periodCount.current.valueAsNumber;
-        entry.lengthType = parseDayType(periodType.current.value);
+        entry.lengthType = DayTypeLib.parseDayType(periodType.current.value);
         entry.repeats = repeats.current.checked;
         entry.lastDay = lastDay.current ? lastDay.current.valueAsDate : null;
         entry.category = categoryNew;
