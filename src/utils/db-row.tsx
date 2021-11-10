@@ -1,4 +1,4 @@
-import { DateLib } from "./date-helpers";
+import DateLib from "./date-helpers";
 import DayTypeLib, { DayType } from "./day-type";
 
 export default class JournalEntry {

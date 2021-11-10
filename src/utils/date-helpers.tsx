@@ -1,4 +1,4 @@
-export const DateLib = {
+const DateLib = {
     treatAsUTC: function(date: Date) {
         var result = new Date(date);
         result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
@@ -21,3 +21,5 @@ export const DateLib = {
         return date;
     }
 };
+
+export default DateLib;

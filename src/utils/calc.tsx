@@ -1,6 +1,6 @@
 import JournalEntry from '../utils/db-row';
 import DayTypeLib, { DayType } from "../utils/day-type";
-import { DateLib } from './date-helpers';
+import DateLib from './date-helpers';
 
 class Range {
     row: JournalEntry;

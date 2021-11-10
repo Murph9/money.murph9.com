@@ -1,4 +1,4 @@
-import { DateLib } from "./date-helpers";
+import DateLib from "./date-helpers";
 
 export enum DayType {
     None,
