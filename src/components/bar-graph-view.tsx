@@ -49,7 +49,7 @@ const BarGraphView = (props: BarGraphViewProps) => {
                     {values.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? 'green': 'red'} strokeWidth={index === currentIndex ? 1 : 0} stroke='black'/>
                     ))}
-                    <LabelList dataKey="name" position="bottom" />
+                    <LabelList dataKey="name" position="insideBottom" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
                     <LabelList dataKey="amountFormatted" position="top" />
                 </Bar>
             </BarChart>
