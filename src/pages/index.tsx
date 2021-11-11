@@ -1,10 +1,12 @@
 import * as React from "react";
+import Button from 'react-bootstrap/Button';
+import { graphql } from "gatsby";
+
 import LoginForm from "../components/login-form";
 import MainForm from "../components/main-form";
 import AwsS3Service, {AwsS3Config} from "../utils/s3-controller";
 import DataService from "../utils/db-repo";
 import JournalEntry from "../utils/db-row";
-import { graphql } from "gatsby";
 import Calc from "../utils/calc";
 
 export const pageQuery = graphql`query a { site { siteMetadata { awsFileName } } }`
@@ -71,6 +73,9 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
 
     return (
     <>
+      <Button variant="info" style={{float: 'right'}} onClick={() => {
+        this.setState({ database: null, calc: null, loggedIn: false});
+      }}>Logout</Button>
       <MainForm data={this.state.database.getRaw()} calc={this.state.calc} editRow={this.editRow} deleteRow={this.deleteRow} />
     </>
     );

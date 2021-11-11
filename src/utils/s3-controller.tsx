@@ -3,7 +3,6 @@ import AWS from 'aws-sdk';
 export class AwsS3Config {
     apiKey: string;
     apiSecret: string;
-    bucketSite: string;
     bucketName: string;
 }
 
@@ -16,7 +15,6 @@ export default class AwsS3Service {
         this.config = config;
 
         AWS.config.credentials = new AWS.Credentials(this.config.apiKey, this.config.apiSecret);
-        AWS.config.update({ region: this.config.bucketSite });
 
         this.s3 = new AWS.S3({
             apiVersion: '2006-03-01',

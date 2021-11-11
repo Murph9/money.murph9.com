@@ -17,7 +17,6 @@ const getFromLocalStorage = function(key: string, fallback: string) {
 
 const LoginForm = (props: any) => {
     const bucket = React.createRef<HTMLInputElement>();
-    const region = React.createRef<HTMLInputElement>();
 
     const apiKey = React.createRef<HTMLInputElement>();
     const apiSecret = React.createRef<HTMLInputElement>();
@@ -33,7 +32,6 @@ const LoginForm = (props: any) => {
 
         if (typeof window !== 'undefined') {
             window.localStorage.setItem("bucket", bucket.current.value);
-            window.localStorage.setItem("region", region.current.value);
             if (props.inWebView) {
                 window.localStorage.setItem("apiKey", apiKey.current.value);
                 window.localStorage.setItem("apiSecret", apiSecret.current.value);
@@ -44,9 +42,8 @@ const LoginForm = (props: any) => {
         creds.apiKey = apiKey.current.value;
         creds.apiSecret = apiSecret.current.value;
         creds.bucketName = bucket.current.value;
-        creds.bucketSite = region.current.value;
 
-        if (!creds.bucketName || !creds.bucketSite || !creds.apiSecret || !creds.apiKey) {
+        if (!creds.bucketName || !creds.apiSecret || !creds.apiKey) {
             alert('All fields must be set.'); // TODO better validation please
             return;
         }
@@ -60,10 +57,6 @@ const LoginForm = (props: any) => {
                 <Form.Control ref={bucket} defaultValue={getFromLocalStorage("bucket", "")}/> 
             </FloatingLabel>
             
-            <FloatingLabel label="AWS Region">
-                <Form.Control ref={region} defaultValue={getFromLocalStorage("region", "")}/> 
-            </FloatingLabel>
-
             <FloatingLabel label="AWS Api Key">
                 <Form.Control ref={apiKey} defaultValue={getFromLocalStorageInWebView("apiKey", "")} />
             </FloatingLabel>
