@@ -15,7 +15,8 @@ import {
     LabelList,
     ReferenceLine,
     Cell,
-    ResponsiveContainer
+    ResponsiveContainer,
+    XAxis
   } from 'recharts';
 
 class BarGraphViewProps {
@@ -74,13 +75,14 @@ const BarGraphView = (props: BarGraphViewProps) => {
             <BarChart data={values} margin={{ top: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <ReferenceLine y={0} stroke="#000" />
+                <XAxis dataKey={'name'}/>
                 <Bar dataKey="amount" fill="#8884d8" isAnimationActive={false} onClick={(data, index) => {
                     props.viewReport(periodType, data.date);
                 }}>
                     {values.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? 'green': 'red'} />
                     ))}
-                    <LabelList dataKey="name" position="insideBottom" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
+                    
                     <LabelList dataKey="amountFormatted" position="top" />
                     <LabelList dataKey="current" position="center" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
                 </Bar>

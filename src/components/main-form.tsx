@@ -60,8 +60,13 @@ const MainForm = (props: MainFormProps) => {
     }
 
     return (<>
-        <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-        <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} save={handleEditClose} exit={handleEditExit} delete={handleDelete} />
+        <div>
+            <h1 style={{textAlign:'center'}}>
+                {`$${props.calc.totalFor(DayType.Day, new Date()).toFixed(2)}`}
+            </h1>
+            <Button variant="primary" onClick={() => setEdit(true)} style={{float: 'left'}}>Add</Button>
+            <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} save={handleEditClose} exit={handleEditExit} delete={handleDelete} />
+        </div>
 
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
         {report && <div>{JSON.stringify(Array.from(report))}</div>}
