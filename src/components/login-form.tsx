@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { AwsS3Config } from "../utils/s3-controller";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
+
 const getFromLocalStorage = function(key: string, fallback: string) {
     if (typeof window === 'undefined')
         return fallback;
@@ -21,12 +22,22 @@ const LoginForm = (props: any) => {
     const apiKey = React.createRef<HTMLInputElement>();
     const apiSecret = React.createRef<HTMLInputElement>();
 
+    const getFromLocalStorageInWebView = function(key: string, fallback: string) {
+        if (props.inWebView)
+            return getFromLocalStorage(key, fallback);
+        return fallback;
+    }
+
     const submit = function(evt: any) {
         evt.preventDefault();
 
         if (typeof window !== 'undefined') {
             window.localStorage.setItem("bucket", bucket.current.value);
             window.localStorage.setItem("region", region.current.value);
+            if (props.inWebView) {
+                window.localStorage.setItem("apiKey", apiKey.current.value);
+                window.localStorage.setItem("apiSecret", apiSecret.current.value);
+            }
         }
 
         const creds = new AwsS3Config();
@@ -54,11 +65,11 @@ const LoginForm = (props: any) => {
             </FloatingLabel>
 
             <FloatingLabel label="AWS Api Key">
-                <Form.Control ref={apiKey} defaultValue={""} />
+                <Form.Control ref={apiKey} defaultValue={getFromLocalStorageInWebView("apiKey", "")} />
             </FloatingLabel>
             
             <FloatingLabel label="AWS Api Secret">
-                <Form.Control type="password" ref={apiSecret} defaultValue={""} />
+                <Form.Control type="password" ref={apiSecret} defaultValue={getFromLocalStorageInWebView("apiSecret", "")} />
             </FloatingLabel>
 
             <Button type="submit">Login</Button>

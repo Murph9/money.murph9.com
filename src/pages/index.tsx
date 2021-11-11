@@ -14,15 +14,20 @@ interface IIndexPageState {
   loggedIn: boolean;
   calc: Calc;
   database: DataService;
+  inWebView: boolean;
 }
 
 export default class IndexPage extends React.Component<any, IIndexPageState> {
   constructor(props: any) {
     super(props);
+    
+    const params = new URLSearchParams(props.location.search);
+    console.log(params.get('webview'));
     this.state = {
       loggedIn: false,
       calc: null,
       database: null,
+      inWebView: !!params.get('webview')
     };
 
     this.setLoggedIn = this.setLoggedIn.bind(this);
@@ -61,7 +66,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     }
 
     if (!this.state.loggedIn) {
-      return (<LoginForm callback={this.login} />);
+      return (<LoginForm callback={this.login} inWebView={this.state.inWebView} />);
     }
 
     return (
