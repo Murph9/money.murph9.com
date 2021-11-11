@@ -19,6 +19,10 @@ const DateLib = {
     addYears: function(date: Date, count: number): Date {
         date.setFullYear(date.getFullYear() + count);
         return date;
+    },
+    addOffsetToDate: function(date: Date): Date {
+        date.setTime(date.getTime() - date.getTimezoneOffset() * 60000);
+        return date;
     }
 };
 

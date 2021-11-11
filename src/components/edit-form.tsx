@@ -11,6 +11,7 @@ import Col from 'react-bootstrap/Col';
 import JournalEntry from "../utils/db-row";
 import DayTypeLib, { DayType } from "../utils/day-type";
 import TypeAhead from "./typeahead.js";
+import DateLib from "../utils/date-helpers";
 
 class EditFormProps {
     show: boolean;
@@ -33,6 +34,7 @@ const EditForm = (props: EditFormProps) => {
     const amount = React.createRef<HTMLInputElement>();
     const isIncome = React.createRef<HTMLInputElement>();
 
+    const fromDefault = DateLib.addOffsetToDate(new Date());
     const from = React.createRef<HTMLInputElement>();
     const periodCount = React.createRef<HTMLInputElement>();
 
@@ -106,7 +108,7 @@ const EditForm = (props: EditFormProps) => {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Start Date</Form.Label>
                     <Col sm={8}>
-                        <Form.Control type="date" ref={from} defaultValue={getValueOf('from', new Date()).toISOString().slice(0, 10)} />
+                        <Form.Control type="date" ref={from} defaultValue={getValueOf('from', fromDefault).toISOString().slice(0, 10)} />
                     </Col>
                 </Form.Group>
 
