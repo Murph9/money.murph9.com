@@ -82,6 +82,17 @@ const EditForm = (props: EditFormProps) => {
         console.log("Saving:", entry);
         props.save(entry);
     }
+
+    const [perDay, setPerDay] = React.useState(props.entry ? props.entry.calcPerDay() : 0);
+
+    const setUpdatedPerDay = () => {
+        let perDay = 0;
+        if (amount.current && periodType.current && periodCount.current) {
+            const dayType = DayTypeLib.parseDayType(periodType.current.value);
+            perDay = amount.current.valueAsNumber/DayTypeLib.calcDayCount(dayType, +periodCount.current.valueAsNumber);
+        }
+        setPerDay(perDay);
+    }
     
     return (
     <Modal show={props.show} onHide={props.exit} animation={false}>
@@ -96,12 +107,13 @@ const EditForm = (props: EditFormProps) => {
                         <InputGroup>
                             <InputGroup.Text>$</InputGroup.Text>
                             <FloatingLabel label="Amount">
-                                <Form.Control type="number" defaultValue={getValueOf('amount', 0)} ref={amount} />
+                                <Form.Control type="number" defaultValue={getValueOf('amount', 0)} ref={amount} onChange={setUpdatedPerDay}/>
                             </FloatingLabel>
                         </InputGroup>
                     </Col>
                     <Col sm={5}>
                         <Form.Check id="isIncome" ref={isIncome} label="Is Income" defaultChecked={getValueOf('isIncome', false)} />
+                        ${perDay.toFixed(2)}/day
                     </Col>
                 </Form.Group>
 
@@ -114,10 +126,10 @@ const EditForm = (props: EditFormProps) => {
 
                 <Form.Group as={Row} className="mb-3">
                     <Col sm={4}>
-                        <Form.Control type="number" min="0" ref={periodCount} defaultValue={getValueOf('lengthCount', 1)} />
+                        <Form.Control type="number" min="0" ref={periodCount} defaultValue={getValueOf('lengthCount', 1)} onChange={setUpdatedPerDay}/>
                     </Col>
                     <Col sm={8}>
-                        <Form.Select ref={periodType} defaultValue={getValueOf('lengthType', DayType.Day)}>
+                        <Form.Select ref={periodType} defaultValue={getValueOf('lengthType', DayType.Day)} onChange={setUpdatedPerDay}>
                             <option value={DayType.Day}>Day</option>
                             <option value={DayType.Week}>Week</option>
                             <option value={DayType.Month}>Month</option>

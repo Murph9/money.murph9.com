@@ -85,6 +85,11 @@ const DayTypeLib = {
         }
     
         return output;
+    },
+    calcDayCount(periodType: DayType, periodCount: number): number {
+        var now = new Date();
+        var end = DayTypeLib.offsetDateBy(new Date(), periodType, periodCount);
+        return DateLib.daysBetween(now, end);
     }
 }
 export default DayTypeLib;
