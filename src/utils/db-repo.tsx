@@ -34,6 +34,10 @@ export default class DataService {
                 entry.lengthCount = x['lengthCount'];
                 entry.lengthType = DayTypeLib.parseDayType(x['lengthType']);
                 entry.note = x['note'];
+
+                if (entry.validate())
+                    console.log(entry);
+
                 return entry;
             }).sort((x: JournalEntry, y: JournalEntry) => {
                 return +x.from - +y.from;
