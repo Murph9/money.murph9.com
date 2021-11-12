@@ -88,9 +88,10 @@ export default class Calc {
     rowsForMonth(startDate: Date): Array<JournalEntry> {
         var date = DayTypeLib.setToStart(new Date(startDate), DayType.Month);
         const month = date.getMonth();
-        const array = this.rowsForDay(date);
+        const array = [];
         while (date.getMonth() == month) {
-            array.push(...this.rowsForDay(DateLib.addDays(date, 1)));
+            array.push(...this.rowsForDay(date));
+            DateLib.addDays(date, 1)
         }
         return array;
     }
@@ -98,9 +99,10 @@ export default class Calc {
     rowsForYear(startDate: Date): Array<JournalEntry> {
         var date = DayTypeLib.setToStart(new Date(startDate), DayType.Year);
         const year = date.getFullYear();
-        const array = this.rowsForMonth(date);
+        const array = [];
         while (date.getFullYear() == year) {
-            array.push(...this.rowsForMonth(DateLib.addMonths(date, 1)));
+            array.push(...this.rowsForMonth(date));
+            DateLib.addMonths(date, 1)
         }
         return array;
     }
