@@ -59,7 +59,10 @@ const BarGraphView = (props: BarGraphViewProps) => {
                     <Button variant="primary" onClick={subOffset} style={{float: 'right'}}>-</Button>
                 </Col>
                 <Col>
-                <Form.Select value={periodType} onChange={(e) => setPeriodType(DayTypeLib.parseDayType(e.currentTarget.value))}>
+                <Form.Select value={periodType} onChange={(e) =>  {
+                    setPeriodType(DayTypeLib.parseDayType(e.currentTarget.value));
+                    setPeriodOffset(0);
+                }}>
                     <option value={DayType.Day}>Day</option>
                     <option value={DayType.Week}>Week</option>
                     <option value={DayType.Month}>Month</option>
