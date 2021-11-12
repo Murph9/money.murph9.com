@@ -1,6 +1,7 @@
 import JournalEntry from '../utils/db-row';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import DateLib from './date-helpers';
+import Cache, { ObjCache } from './obj-cache';
 
 class Range {
     row: JournalEntry;
@@ -28,10 +29,12 @@ class Range {
 export default class Calc {
     dayRanges: Array<Range>;
     categories: Array<string> = [];
+    totalCache: ObjCache = Cache();
+    rowCache: ObjCache = Cache();
 
     constructor(data: Array<JournalEntry>) {
         this.dayRanges = data.map(x => new Range(x));
-
+        
         for (const row of data) {
             if (!this.categories.includes(row.category))
                 this.categories.push(row.category);
@@ -40,24 +43,54 @@ export default class Calc {
         console.log("Categories: ", this.categories.length);
     }
 
+    _createKey(type: DayType, startDate: Date): string {
+        return type + '|' + startDate.toUTCString();
+    }
+
     totalFor(type: DayType, startDate: Date): number {
+        startDate = DayTypeLib.setToStart(startDate, type);
+
+        const key = this._createKey(type, startDate);
+        let result = this.totalCache.get(key);
+        if (result) {
+            return result;
+        }
+        
         const rows = this.rowsFor(type, startDate);
-        return rows.reduce((total, x) => total + x.calcPerDay(), 0);
+        result = rows.reduce((total, x) => total + x.calcPerDay(), 0);
+
+        this.totalCache.put(key, result);
+        return result;
     }
 
     rowsFor(type: DayType, startDate: Date): Array<JournalEntry> {
+        startDate = DayTypeLib.setToStart(startDate, type);
+
+        const key = 'rows:' + this._createKey(type, startDate);
+        let result = this.rowCache.get(key);
+        if (result) {
+            return result;
+        }
+        
         switch (type) {
             case DayType.Day:
-                return this.rowsForDay(startDate);
+                result = this.rowsForDay(startDate);
+                break;
             case DayType.Week:
-                return this.rowsForWeek(startDate);
+                result = this.rowsForWeek(startDate);
+                break;
             case DayType.Month:
-                return this.rowsForMonth(startDate);
+                result = this.rowsForMonth(startDate);
+                break;
             case DayType.Year:
-                return this.rowsForYear(startDate);
+                result = this.rowsForYear(startDate);
+                break;
             default:
                 return null;
         }
+
+        this.rowCache.put(key, result);
+        return result;
     }
 
     rowsForDay(startDate: Date): Array<JournalEntry> {
@@ -75,13 +108,13 @@ export default class Calc {
         var date = DayTypeLib.setToMonday(new Date(startDate));
 
         return [
-            ...this.rowsForDay(date),
-            ...this.rowsForDay(DateLib.addDays(date, 1)),
-            ...this.rowsForDay(DateLib.addDays(date, 1)),
-            ...this.rowsForDay(DateLib.addDays(date, 1)),
-            ...this.rowsForDay(DateLib.addDays(date, 1)),
-            ...this.rowsForDay(DateLib.addDays(date, 1)),
-            ...this.rowsForDay(DateLib.addDays(date, 1))
+            ...this.rowsFor(DayType.Day, date),
+            ...this.rowsFor(DayType.Day, DateLib.addDays(date, 1)),
+            ...this.rowsFor(DayType.Day, DateLib.addDays(date, 1)),
+            ...this.rowsFor(DayType.Day, DateLib.addDays(date, 1)),
+            ...this.rowsFor(DayType.Day, DateLib.addDays(date, 1)),
+            ...this.rowsFor(DayType.Day, DateLib.addDays(date, 1)),
+            ...this.rowsFor(DayType.Day, DateLib.addDays(date, 1))
         ];
     }
 
@@ -90,7 +123,7 @@ export default class Calc {
         const month = date.getMonth();
         const array = [];
         while (date.getMonth() == month) {
-            array.push(...this.rowsForDay(date));
+            array.push(...this.rowsFor(DayType.Day, date));
             DateLib.addDays(date, 1)
         }
         return array;
@@ -101,7 +134,7 @@ export default class Calc {
         const year = date.getFullYear();
         const array = [];
         while (date.getFullYear() == year) {
-            array.push(...this.rowsForMonth(date));
+            array.push(...this.rowsFor(DayType.Month, date));
             DateLib.addMonths(date, 1)
         }
         return array;
