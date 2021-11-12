@@ -6,6 +6,7 @@ import Toast from 'react-bootstrap/Toast';
 import JournalEntry from "../utils/db-row";
 import Calc from "../utils/calc";
 import EditForm from './edit-form';
+import Report from './report';
 import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';
 import { DayType } from "../utils/day-type";
@@ -70,7 +71,7 @@ const MainForm = (props: MainFormProps) => {
         </div>
 
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
-        {report && <div>{JSON.stringify(Array.from(report))}</div>}
+        {report && <Report data={report} />}
 
         <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
         {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}
