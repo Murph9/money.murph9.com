@@ -27,7 +27,15 @@ export default class AwsS3Service {
     getFile(file: string, success: (obj: any) => void, failure: (err: string) => void) {
         console.log("getting file: " + file);
         const that = this;
-        this.s3.getObject({ Bucket: this.config.bucketName, Key: file }, function(err, data) {
+        var req = this.s3.getObject({ Bucket: this.config.bucketName, Key: file });
+
+        const now = new Date();
+        now.setDate(now.getDate() - 5);
+        req.on('build', function() {
+            req.httpRequest.headers['If-Modified-Since'] = now.toISOString();
+        });
+
+        req.send(function(err, data) {
             if (err) {
                 console.log("Failed to get file", err);
                 if (err.code === "NoSuchKey") {
