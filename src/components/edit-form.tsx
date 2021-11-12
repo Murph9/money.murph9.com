@@ -44,7 +44,7 @@ const EditForm = (props: EditFormProps) => {
     const lastDay = React.createRef<HTMLInputElement>();
     
     const [category, setCategorySelections] = React.useState([]);
-    const [categorySearch, setCategorySearch] = React.useState();
+    const [categorySearch, setCategorySearch] = React.useState(getValueOf('category', null));
 
     const note = React.createRef<HTMLTextAreaElement>();
 
