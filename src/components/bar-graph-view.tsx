@@ -63,7 +63,6 @@ const BarGraphView = (props: BarGraphViewProps) => {
                     <option value={DayType.Day}>Day</option>
                     <option value={DayType.Week}>Week</option>
                     <option value={DayType.Month}>Month</option>
-                    <option value={DayType.Quarter}>Quarter</option>
                     <option value={DayType.Year}>Year</option>
                 </Form.Select>
                 </Col>
