@@ -4,6 +4,7 @@ import { DayType } from "../utils/day-type";
 import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 const pageSize: number = 20;
 
@@ -31,8 +32,11 @@ const Entry = (props: EntryProps) => {
 
 const FullRecordList = (props: RecordListProps) => {
     const [pageNum, setPageNum] = React.useState(0);
+    const [filter, setFilter] = React.useState("");
 
-    const pages = props.data.length/pageSize;
+    const data = props.data.filter(x => x.category.includes(filter));
+
+    const pages = data.length/pageSize;
     const paginationItems = [];
     for (let i = 0; i < pages; i++)
         paginationItems.push(<Pagination.Item key={i} active={i === pageNum} onClick={() => setPageNum(i)}>
@@ -40,13 +44,16 @@ const FullRecordList = (props: RecordListProps) => {
           </Pagination.Item>);
 
     const items = [];
-    for (let i = pageSize*pageNum; i < props.data.length && i < pageSize*(pageNum+1); i++) {
-        items.push(<Entry row={props.data[i]} edit={props.edit}/>);
+    for (let i = pageSize*pageNum; i < data.length && i < pageSize*(pageNum+1); i++) {
+        items.push(<Entry row={data[i]} edit={props.edit}/>);
     }
 
     return <>
-        <div>Record count: {props.data.length}</div>
-
+        <div>
+            Record count: {data.length} (total count: {props.data.length})
+            <Form.Control value={filter} onChange={(e) => setFilter(e.currentTarget.value)}/>
+        </div>
+        
         <Table striped bordered hover>
             <thead>
                 <tr>
