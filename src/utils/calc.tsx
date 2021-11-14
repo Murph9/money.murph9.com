@@ -2,6 +2,7 @@ import JournalEntry from '../utils/db-row';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import DateLib from './date-helpers';
 import Cache, { ObjCache } from './obj-cache';
+import { EntryId } from 'aws-sdk/clients/iotsitewise';
 
 class Range {
     row: JournalEntry;
@@ -31,13 +32,18 @@ export default class Calc {
     categories: Array<string> = [];
     totalCache: ObjCache = Cache();
     rowCache: ObjCache = Cache();
+    categoryDefaultCache: Map<string, {count: number, type: DayType}> = new Map();
 
     constructor(data: Array<JournalEntry>) {
         this.dayRanges = data.map(x => new Range(x));
         
         for (const row of data) {
-            if (!this.categories.includes(row.category))
+            if (!this.categories.includes(row.category)) {
                 this.categories.push(row.category);
+            }
+            
+            // just use the last entry of the category
+            this.categoryDefaultCache.set(row.category, {count: row.lengthCount, type: row.lengthType});
         }
         console.log("Ranges length:", this.dayRanges.length);
         console.log("Categories: ", this.categories.length);
@@ -45,6 +51,13 @@ export default class Calc {
 
     _createKey(type: DayType, startDate: Date): string {
         return type + '|' + startDate.toUTCString();
+    }
+
+    getCategoryDefault(category: string): {count: number, type: DayType} {
+        if (this.categoryDefaultCache.has(category)) {
+            return this.categoryDefaultCache.get(category);
+        }
+        return {count: 1, type: DayType.Day};
     }
 
     totalFor(type: DayType, startDate: Date): number {

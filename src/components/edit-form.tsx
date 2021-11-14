@@ -12,6 +12,7 @@ import JournalEntry from "../utils/db-row";
 import DayTypeLib, { DayType } from "../utils/day-type";
 import TypeAhead from "./typeahead.js";
 import DateLib from "../utils/date-helpers";
+import Calc from "../utils/calc";
 
 class EditFormProps {
     show: boolean;
@@ -20,6 +21,7 @@ class EditFormProps {
     delete: (row: JournalEntry) => void;
     entry: JournalEntry;
     categoryList: Array<string>;
+    calc: Calc;
 }
 
 const EditForm = (props: EditFormProps) => {
@@ -45,6 +47,12 @@ const EditForm = (props: EditFormProps) => {
     
     const [category, setCategorySelections] = React.useState([]);
     const [categorySearch, setCategorySearch] = React.useState(getValueOf('category', null));
+    const categoryOnChange = (e: Array<string>) => {
+        setCategorySelections(e);
+        var defaults = props.calc.getCategoryDefault(e[0]);
+        periodType.current.value = defaults.type.toString();
+        periodCount.current.value = defaults.count.toString();
+    }
 
     const note = React.createRef<HTMLTextAreaElement>();
 
@@ -118,6 +126,18 @@ const EditForm = (props: EditFormProps) => {
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm={4}>Category</Form.Label>
+                    <Col sm={8}>
+                        <TypeAhead id="categoryButBetter"
+                            options={props.categoryList || []}
+                            defaultSelected={[getValueOf('category', '')]}
+                            onChange={categoryOnChange}
+                            onInputChange={setCategorySearch} 
+                            placeholder="Select a Category"/>
+                    </Col>
+                </Form.Group>
+
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Start Date</Form.Label>
                     <Col sm={8}>
                         <Form.Control type="date" ref={from} defaultValue={getValueOf('from', fromDefault).toISOString().slice(0, 10)} />
@@ -147,14 +167,7 @@ const EditForm = (props: EditFormProps) => {
                         <Form.Control type="date" ref={lastDay} defaultValue={getValueOf('lastDay', null) ? getValueOf('lastDay', null).toISOString().slice(0, 10) : null} />
                     </Col>
                 </Form.Group>
-                
-                <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={4}>Category</Form.Label>
-                    <Col sm={8}>
-                        <TypeAhead id="categoryButBetter" options={props.categoryList || []} defaultSelected={[getValueOf('category', '')]} onChange={setCategorySelections} onInputChange={setCategorySearch} />
-                    </Col>
-                </Form.Group>
-                
+                                
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={4}>Free text</Form.Label>
                     <Col sm={8}>

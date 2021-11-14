@@ -24,7 +24,6 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     super(props);
     
     const params = new URLSearchParams(props.location.search);
-    console.log(params.get('webview'));
     this.state = {
       loggedIn: false,
       calc: null,

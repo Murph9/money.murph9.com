@@ -67,7 +67,7 @@ const MainForm = (props: MainFormProps) => {
                 <span style={{fontSize: '.475em'}}>/day, today</span>
             </h1>
             <Button variant="primary" onClick={() => setEdit(true)} style={{float: 'left'}}>Add</Button>
-            <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} save={handleEditClose} exit={handleEditExit} delete={handleDelete} />
+            { edit && <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} calc={props.calc} save={handleEditClose} exit={handleEditExit} delete={handleDelete} /> }
         </div>
 
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
