@@ -47,11 +47,16 @@ const EditForm = (props: EditFormProps) => {
     
     const [category, setCategorySelections] = React.useState([]);
     const [categorySearch, setCategorySearch] = React.useState(getValueOf('category', null));
-    const categoryOnChange = (e: Array<string>) => {
+    const categoryOnChange = (e: Array<{label:string}>) => {
         setCategorySelections(e);
-        var defaults = props.calc.getCategoryDefault(e[0]);
-        periodType.current.value = defaults.type.toString();
-        periodCount.current.value = defaults.count.toString();
+        if (e && e.length > 0) {
+            e[0].label = e[0].label.toLowerCase().trim();
+            if (!props.entry) {
+                var defaults = props.calc.getCategoryDefault(e[0].label);
+                periodType.current.value = defaults.type.toString();
+                periodCount.current.value = defaults.count.toString();
+            }
+        }
     }
 
     const note = React.createRef<HTMLTextAreaElement>();
@@ -129,10 +134,10 @@ const EditForm = (props: EditFormProps) => {
                     <Form.Label column sm={4}>Category</Form.Label>
                     <Col sm={8}>
                         <TypeAhead id="categoryButBetter"
-                            options={props.categoryList || []}
+                            options={props.categoryList.map(x => { return {'label':x};}) || []}
                             defaultSelected={[getValueOf('category', '')]}
                             onChange={categoryOnChange}
-                            onInputChange={setCategorySearch} 
+                            onInputChange={setCategorySearch}
                             placeholder="Select a Category"/>
                     </Col>
                 </Form.Group>
