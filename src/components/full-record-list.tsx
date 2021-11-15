@@ -47,7 +47,7 @@ const FullRecordList = (props: RecordListProps) => {
 
     const items = [];
     for (let i = pageSize*pageNum; i < data.length && i < pageSize*(pageNum+1); i++) {
-        items.push(<Entry row={data[i]} edit={props.edit}/>);
+        items.push(<Entry row={data[i]} key={i+"page"} edit={props.edit}/>);
     }
 
     return <>
