@@ -1,10 +1,12 @@
 import * as React from "react";
-import JournalEntry from "../utils/db-row";
-import { DayType } from "../utils/day-type";
 import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+
+import JournalEntry from "../utils/db-row";
+import { DayType } from "../utils/day-type";
+import DateUtil from "../utils/date-helpers";
 
 const pageSize: number = 20;
 
@@ -40,19 +42,25 @@ const FullRecordList = (props: RecordListProps) => {
 
     const pages = data.length/pageSize;
     const paginationItems = [];
-    for (let i = 0; i < pages; i++)
+    for (let i = 0; i < pages && i < 5; i++)
         paginationItems.push(<Pagination.Item key={i} active={i === pageNum} onClick={() => setPageNum(i)}>
             {i+1}
           </Pagination.Item>);
+    if (pages > 5)
+        paginationItems.push(<Pagination.Ellipsis />);
 
     const items = [];
     for (let i = pageSize*pageNum; i < data.length && i < pageSize*(pageNum+1); i++) {
         items.push(<Entry row={data[i]} key={i+"page"} edit={props.edit}/>);
     }
 
+    const recordsToday = props.data.filter(x => x.from > DateUtil.addDays(new Date(), -1));
+    const recordsThisWeek = props.data.filter(x => x.from > DateUtil.addDays(new Date(), -7));
+
     return <>
         <div>
-            Record count: {data.length} (total count: {props.data.length})
+            Record count: {data.length} (total count: {props.data.length})<br/>
+            today: {recordsToday.length}, week: {recordsThisWeek.length}
             <Form.Control value={filter} onChange={(e) => setFilter(e.currentTarget.value)}/>
         </div>
         

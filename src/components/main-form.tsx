@@ -10,7 +10,6 @@ import Report from './report';
 import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';
 import { DayType } from "../utils/day-type";
-import DateUtil from "../utils/date-helpers";
 
 class MainFormProps {
     data: Array<JournalEntry>;
@@ -61,9 +60,6 @@ const MainForm = (props: MainFormProps) => {
         setReport(props.calc.reportFor(type, date));
     }
 
-    const recordsToday = props.data.filter(x => x.from > DateUtil.addDays(new Date(), -1));
-    const recordsThisWeek = props.data.filter(x => x.from > DateUtil.addDays(new Date(), -7));
-
     return (<>
         <div>
             <h1 style={{textAlign:'center'}}>
@@ -72,9 +68,8 @@ const MainForm = (props: MainFormProps) => {
             </h1>
             <div style={{float: 'left'}}>
                 <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-                today: {recordsToday.length}, week: {recordsThisWeek.length}
             </div>
-            
+
             { edit && <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} calc={props.calc} save={handleEditClose} exit={handleEditExit} delete={handleDelete} /> }
         </div>
 
