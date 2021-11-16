@@ -78,7 +78,7 @@ const BarGraphView = (props: BarGraphViewProps) => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <ReferenceLine y={0} stroke="#000" />
                 <XAxis dataKey={'name'}/>
-                <Bar dataKey="amount" fill="#8884d8" isAnimationActive={false} onClick={(data, index) => {
+                <Bar dataKey="amount" isAnimationActive={false} onClick={(data, index) => {
                     props.viewReport(periodType, data.date);
                 }}>
                     {values.map((entry, index) => (
