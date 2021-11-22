@@ -80,7 +80,7 @@ const MainForm = (props: MainFormProps) => {
         {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}
 
         <ToastContainer className="p-3" position={'top-center'}>
-            <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={3000} autohide bg='snfo'>
+            <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={2000} autohide bg='snfo'>
                 <Toast.Header>
                     <strong className="me-auto">{showToast}</strong>
                     <small>(just now)</small>

@@ -116,7 +116,7 @@ const EditForm = (props: EditFormProps) => {
             {alert ? <Alert variant="danger">{alert}</Alert> : null}
             <Form onSubmit={save}>
                 <Form.Group as={Row} className="mb-3">
-                    <Col sm={7}>
+                    <Col xs={7}>
                         <InputGroup>
                             <InputGroup.Text>$</InputGroup.Text>
                             <FloatingLabel label="Amount">
@@ -124,15 +124,15 @@ const EditForm = (props: EditFormProps) => {
                             </FloatingLabel>
                         </InputGroup>
                     </Col>
-                    <Col sm={5}>
+                    <Col xs={5}>
                         <Form.Check id="isIncome" ref={isIncome} label="Is Income" defaultChecked={getValueOf('isIncome', false)} />
                         ${perDay.toFixed(2)}/day
                     </Col>
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={4}>Category</Form.Label>
-                    <Col sm={8}>
+                    <Form.Label column xs={4}>Category</Form.Label>
+                    <Col xs={8}>
                         <TypeAhead id="categoryButBetter"
                             options={props.categoryList.map(x => { return {'label':x};}) || []}
                             defaultSelected={[getValueOf('category', '')]}
@@ -143,17 +143,17 @@ const EditForm = (props: EditFormProps) => {
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={4}>Start Date</Form.Label>
-                    <Col sm={8}>
+                    <Form.Label column xs={4}>Start Date</Form.Label>
+                    <Col xs={8}>
                         <Form.Control type="date" ref={from} defaultValue={getValueOf('from', fromDefault).toISOString().slice(0, 10)} />
                     </Col>
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
-                    <Col sm={4}>
+                    <Col xs={4}>
                         <Form.Control type="number" min="0" ref={periodCount} defaultValue={getValueOf('lengthCount', 1)} onChange={setUpdatedPerDay}/>
                     </Col>
-                    <Col sm={8}>
+                    <Col xs={8}>
                         <Form.Select ref={periodType} defaultValue={getValueOf('lengthType', DayType.Day)} onChange={setUpdatedPerDay}>
                             <option value={DayType.Day}>Day</option>
                             <option value={DayType.Week}>Week</option>
@@ -165,17 +165,17 @@ const EditForm = (props: EditFormProps) => {
                 </Form.Group>
                 
                 <Form.Group as={Row} className="mb-3">
-                    <Col sm={4}>
+                    <Col xs={4}>
                         <Form.Check id="repeats" ref={repeats} defaultChecked={getValueOf('repeats', false)} label="Repeats?" />
                     </Col>
-                    <Col sm={8}>
+                    <Col xs={8}>
                         <Form.Control type="date" ref={lastDay} defaultValue={getValueOf('lastDay', null) ? getValueOf('lastDay', null).toISOString().slice(0, 10) : null} />
                     </Col>
                 </Form.Group>
                                 
                 <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={4}>Free text</Form.Label>
-                    <Col sm={8}>
+                    <Form.Label column xs={4}>Free text</Form.Label>
+                    <Col xs={8}>
                         <Form.Control ref={note} as="textarea" defaultValue={getValueOf('note', null)} />
                     </Col>
                 </Form.Group>
