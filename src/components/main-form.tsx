@@ -74,7 +74,7 @@ const MainForm = (props: MainFormProps) => {
         </div>
 
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
-        {report && <Report data={report} />}
+        {report && <Report data={report} closeCallback={() => setReport(null)} />}
 
         <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
         {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}

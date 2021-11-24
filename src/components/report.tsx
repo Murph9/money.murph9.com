@@ -1,4 +1,5 @@
 import * as React from "react";
+import Button from 'react-bootstrap/Button';
 
 import {
     BarChart,
@@ -10,7 +11,8 @@ import {
   } from 'recharts';
 
 class ReportProps {
-    data: Map<string, number>
+    data: Map<string, number>;
+    closeCallback: () => void;
 }
 
 const Report = (props: ReportProps) => {
@@ -19,15 +21,17 @@ const Report = (props: ReportProps) => {
     list.sort((x: object, y: object) => {
         return +y['amount'] - +x['amount'];
     });
-    return (
-    <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={list} layout="vertical">
-            <XAxis dataKey='amount' type="number"/>
-            <YAxis dataKey='name' scale="band" type="category" width={150} interval={0}/>
-            <Bar dataKey="amount" isAnimationActive={false} fill="#8884d8" barSize={50} />
-            <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
-        </BarChart>
-    </ResponsiveContainer>
+    return (<>
+        <ResponsiveContainer width="100%" height={500}>
+            <BarChart data={list} layout="vertical">
+                <XAxis dataKey='amount' type="number"/>
+                <YAxis dataKey='name' scale="band" type="category" width={150} interval={0}/>
+                <Bar dataKey="amount" isAnimationActive={false} fill="#8884d8" barSize={15} />
+                <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
+            </BarChart>
+        </ResponsiveContainer>
+        <Button style={{float: 'right'}} onClick={props.closeCallback}>Close Breakdown</Button>
+    </>
     );
 }
 export default Report;
