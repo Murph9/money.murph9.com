@@ -1,9 +1,11 @@
 import * as React from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { AwsS3Config } from "../utils/s3-controller";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
+import { AwsS3Config } from "../utils/s3-controller";
 
 const getFromLocalStorage = function(key: string, fallback: string) {
     if (typeof window === 'undefined')
@@ -20,6 +22,18 @@ const LoginForm = (props: any) => {
     const region = React.createRef<HTMLInputElement>();
     const apiKey = React.createRef<HTMLInputElement>();
     const apiSecret = React.createRef<HTMLInputElement>();
+    let submitted: boolean = false;
+
+    React.useEffect(() => {
+        if (!submitted && !props.loggedOut && getAllSet()) {
+            submitted = true;
+            submit(null);
+        }
+    });
+
+    const getAllSet = function() {
+        return (apiKey.current.value && apiSecret.current.value && bucket.current.value && region.current.value);
+    }
 
     const getFromLocalStorageInWebView = function(key: string, fallback: string) {
         if (props.inWebView)
@@ -28,7 +42,7 @@ const LoginForm = (props: any) => {
     }
 
     const submit = function(evt: any) {
-        evt.preventDefault();
+        evt && evt.preventDefault();
 
         if (typeof window !== 'undefined') {
             window.localStorage.setItem("bucket", bucket.current.value);
@@ -39,35 +53,47 @@ const LoginForm = (props: any) => {
             }
         }
 
+        if (!getAllSet()) {
+            alert('All fields must be set.'); // TODO better validation please
+            return;
+        }
+
         const creds = new AwsS3Config();
         creds.apiKey = apiKey.current.value;
         creds.apiSecret = apiSecret.current.value;
         creds.bucketName = bucket.current.value;
         creds.bucketSite = region.current.value;
 
-        if (!creds.bucketName || !creds.bucketSite || !creds.apiSecret || !creds.apiKey) {
-            alert('All fields must be set.'); // TODO better validation please
-            return;
-        }
-
         props.callback(creds);
     }
 
     return (
         <Form onSubmit={submit}>
-            <FloatingLabel label="AWS Bucket Name">
-                <Form.Control ref={bucket} defaultValue={getFromLocalStorage("bucket", "")}/> 
-            </FloatingLabel>
-            <FloatingLabel label="AWS Region">
-                <Form.Control ref={region} defaultValue={getFromLocalStorage("region", "")}/>
-            </FloatingLabel>
+            <Form.Group as={Row} className="mb-3">
+                <Form.Label column xs={4}>AWS Bucket Name</Form.Label>
+                <Col xs={8}>
+                    <Form.Control ref={bucket} defaultValue={getFromLocalStorage("bucket", "")}/> 
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+                <Form.Label column xs={4}>AWS Region</Form.Label>
+                <Col xs={8}>
+                    <Form.Control ref={region} defaultValue={getFromLocalStorage("region", "")}/>
+                </Col>
+            </Form.Group>
 
-            <FloatingLabel label="AWS Api Key">
-                <Form.Control ref={apiKey} defaultValue={getFromLocalStorageInWebView("apiKey", "")} />
-            </FloatingLabel>
-            <FloatingLabel label="AWS Api Secret">
-                <Form.Control type="password" ref={apiSecret} defaultValue={getFromLocalStorageInWebView("apiSecret", "")} />
-            </FloatingLabel>
+            <Form.Group as={Row} className="mb-3">
+                <Form.Label column xs={4}>AWS Api Key</Form.Label>
+                <Col xs={8}>
+                    <Form.Control ref={apiKey} defaultValue={getFromLocalStorageInWebView("apiKey", "")} />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+                <Form.Label column xs={4}>AWS Api Secret</Form.Label>
+                <Col xs={8}>
+                    <Form.Control type="password" ref={apiSecret} defaultValue={getFromLocalStorageInWebView("apiSecret", "")} />
+                </Col>
+            </Form.Group>
 
             <Button type="submit">Login</Button>
         </Form>
