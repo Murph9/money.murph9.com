@@ -3,12 +3,15 @@ import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
 
 import JournalEntry from "../utils/db-row";
 import { DayType } from "../utils/day-type";
 import DateUtil from "../utils/date-helpers";
 
-const pageSize: number = 20;
+const pageSize: number = 15;
 
 type RecordListProps = {
     data: Array<JournalEntry>;
@@ -58,13 +61,19 @@ const FullRecordList = (props: RecordListProps) => {
     const recordsThisWeek = props.data.filter(x => x.from > DateUtil.addDays(new Date(), -7));
 
     return <>
-        <div>
-            Record count: {data.length} (total count: {props.data.length})<br/>
-            today: {recordsToday.length}, week: {recordsThisWeek.length}
-            <Form.Control value={filter} onChange={(e) => setFilter(e.currentTarget.value)}/>
-        </div>
+        <Container>
+            <Row>
+                <Col>
+                    <Form.Control value={filter} onChange={(e) => setFilter(e.currentTarget.value)} placeholder="Filter below"/>
+                </Col>
+                <Col>
+                    Record count: {data.length} (total count: {props.data.length})<br/>
+                    today: {recordsToday.length}, week: {recordsThisWeek.length}
+                </Col>
+            </Row>
+        </Container>
         
-        <Table striped bordered hover>
+        <Table striped bordered hover size="sm">
             <thead>
                 <tr>
                     <th>Category</th>
