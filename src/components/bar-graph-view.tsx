@@ -24,6 +24,10 @@ class BarGraphViewProps {
     viewReport: (type: DayType, date: Date) => void;
 }
 
+const getColour = (amount: number, future: boolean) => {
+    return amount >= 0 ? future ? 'lightgreen' : 'green': 'red';
+}
+
 const BarGraphView = (props: BarGraphViewProps) => {
 
     const [periodType, setPeriodType] = React.useState(DayType.Day);
@@ -44,10 +48,11 @@ const BarGraphView = (props: BarGraphViewProps) => {
         const periodStart = DayTypeLib.offsetDateBy(now, periodType, i + graphOffset + periodOffset);
         const value = props.calc.totalFor(periodType, periodStart);
         const obj: any = { name: periodStart.toLocaleDateString(), amount: value, amountFormatted: `$${value.toFixed(2)}`, date: periodStart };
-        if (now.getTime() == periodStart.getTime())
-            obj.current = 'Current';
-        else if (now.getTime() < periodStart.getTime())
-            obj.current = 'Future';
+        if (now.getTime() == periodStart.getTime()) {
+            obj.current = true;
+            obj.amount > 0 ? obj.label = '🠗' : obj.label = '🠕';    
+        } else if (now.getTime() < periodStart.getTime())
+            obj.future = true;
         values.push(obj);
     }
     
@@ -82,11 +87,11 @@ const BarGraphView = (props: BarGraphViewProps) => {
                     props.viewReport(periodType, data.date);
                 }}>
                     {values.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? 'green': 'red'} />
+                        <Cell key={`cell-${index}`} fill={getColour(entry.amount, entry.future)} />
                     ))}
                     
-                    <LabelList dataKey="amountFormatted" position="top" />
-                    <LabelList dataKey="current" position="center" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
+                    <LabelList dataKey="label" position="top" style={{ fill: 'rgba(0, 0, 0, 0.87)', fontSize: '3em' }}/>
+                    <LabelList dataKey="amountFormatted" position="center" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
                 </Bar>
             </BarChart>
             
