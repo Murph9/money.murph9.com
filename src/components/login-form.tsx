@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 
 import { AwsS3Config } from "../utils/s3-controller";
 
@@ -68,6 +69,7 @@ const LoginForm = (props: any) => {
     }
 
     return (
+        <Container>
         <Form onSubmit={submit}>
             <Form.Group as={Row} className="mb-3">
                 <Form.Label column xs={4}>AWS Bucket Name</Form.Label>
@@ -97,6 +99,7 @@ const LoginForm = (props: any) => {
 
             <Button type="submit">Login</Button>
         </Form>
+        </Container>
     );
 };
 
