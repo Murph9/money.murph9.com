@@ -22,19 +22,19 @@ class ReportProps {
 
 class GraphRow {
     name: string;
-    amount: number;
+    existing: number;
     income: boolean;
     added: number = 0;
     removed: number = 0;
 
-    constructor(name: string, amount: number) {
+    constructor(name: string, existing: number) {
         this.name = name;
-        this.amount = amount;
-        this.income = amount > 0;
+        this.existing = existing;
+        this.income = existing > 0;
     }
 
     sum(): number {
-        return this.amount + this.added; // this.removed doesn't play because its not the current value
+        return this.existing + this.added; // this.removed doesn't play because its not the current value
     }
 }
 
@@ -78,9 +78,10 @@ const Report = (props: ReportProps) => {
     graphList = graphList.filter(x => !x.income);
     // every thing is an expense, so show as positive
     graphList.forEach(x => {
-        x.amount *= -1;
+        x.existing *= -1;
         x.added *= -1;
         x.removed *= -1;
+        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word wrap &nbsp;
     });
     
     graphList.sort((x: GraphRow, y: GraphRow) => {
@@ -95,9 +96,9 @@ const Report = (props: ReportProps) => {
         <ResponsiveContainer width="100%" height={Math.min(graphList.length*25, 600)}>
             <BarChart data={graphList} layout="vertical">
                 <Legend verticalAlign="top" height={36}/>
-                <XAxis dataKey='amount' type="number"/>
+                <XAxis dataKey='existing' type="number"/>
                 <YAxis dataKey='name' scale="band" type="category" width={150} interval={0} />
-                <Bar dataKey="amount" isAnimationActive={false} fill="#8884d8" barSize={50} stackId="main" />
+                <Bar dataKey="existing" isAnimationActive={false} fill="#8884d8" barSize={50} stackId="main" />
                 <Bar dataKey="added" isAnimationActive={false} fill="#84d888" barSize={50} stackId="main" />
                 <Bar dataKey="removed" isAnimationActive={false} fill="#844444" barSize={50} stackId="main" />
                 <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
