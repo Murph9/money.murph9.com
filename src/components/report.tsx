@@ -27,10 +27,10 @@ class GraphRow {
     added: number = 0;
     removed: number = 0;
 
-    constructor(name: string, amount: number, income: boolean) {
+    constructor(name: string, amount: number) {
         this.name = name;
         this.amount = amount;
-        this.income = income;
+        this.income = amount > 0;
     }
 
     sum(): number {
@@ -43,47 +43,57 @@ const Report = (props: ReportProps) => {
     const prev = props.calc.reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
     const cur = props.calc.reportFor(props.type, props.date);
 
-    const prevList = Array.from(prev, ([name, value]) => new GraphRow(name, Math.abs(value), value > 0));
-    const curList = Array.from(cur, ([name, value]) => new GraphRow(name, Math.abs(value), value > 0));
-
-    let list = [...curList];
-    for (const row of prevList) {
-        if (curList.some(e => e.name == row.name && e.amount == row.amount)) {
-            //ignore it exists
-        } else if (curList.some(e => e.name == row.name)) {
-            // covered by the second for loop, either loop could do this
-        } else {
-            const addedEntry = new GraphRow(row.name, 0, row.income);
-            addedEntry.removed = row.amount;
-            list.push(addedEntry);
+    let graphList: Array<GraphRow> = [];
+    const names = [...new Set([...prev.keys(), ...cur.keys()])]; // get all names
+    for (const name of names) {
+        if (!prev.has(name)) {
+            let value = cur.get(name);
+            let record = new GraphRow(name, 0);
+            record.added = value;
+            graphList.push(record);
         }
-    }
-
-    for (const row of curList) {
-        if (prevList.some(e => e.name == row.name && e.amount == row.amount)) {
-            //ignore it exists
-        } else if (prevList.some(e => e.name == row.name)) {
-            const addedAmount = row.amount - prevList.filter(e => e.name == row.name)[0].amount;
-            if (addedAmount > 0) {
-                row.added = addedAmount;
-                row.amount -= addedAmount;
+        else if (!cur.has(name)) {
+            let value = prev.get(name);
+            let record = new GraphRow(name, 0);
+            record.removed = value;
+            graphList.push(record);
+        } else {
+            // both woo
+            let prevValue = prev.get(name);
+            let curValue = cur.get(name);
+            if (prevValue < curValue) {
+                let record = new GraphRow(name, prevValue);
+                record.added = curValue - prevValue;
+                graphList.push(record);
+            } else if (prevValue > curValue) {
+                let record = new GraphRow(name, curValue);
+                record.removed = prevValue - curValue;
+                graphList.push(record);
             } else {
-                row.removed = -addedAmount;
+                graphList.push(new GraphRow(name, curValue));
             }
-        } else {
-            row.added = row.amount;
-            row.amount = 0;
         }
     }
 
-    list = list.filter(x => !x.income);
-    list.sort((x: GraphRow, y: GraphRow) => {
+    graphList = graphList.filter(x => !x.income);
+    // every thing is an expense, so show as positive
+    graphList.forEach(x => {
+        x.amount *= -1;
+        x.added *= -1;
+        x.removed *= -1;
+    });
+    
+    graphList.sort((x: GraphRow, y: GraphRow) => {
         return +y.sum() - +x.sum();
     });
     
     return (<>
-        <ResponsiveContainer width="100%" height={Math.min(list.length*25, 600)}>
-            <BarChart data={list} layout="vertical">
+        <div>
+            <h4 style={{float: 'left'}}>Report for the {DayType[props.type]} of {props.date.toLocaleDateString()}</h4>
+            <Button style={{float: 'right'}} onClick={props.closeCallback}>Close Breakdown</Button>
+        </div>
+        <ResponsiveContainer width="100%" height={Math.min(graphList.length*25, 600)}>
+            <BarChart data={graphList} layout="vertical">
                 <Legend verticalAlign="top" height={36}/>
                 <XAxis dataKey='amount' type="number"/>
                 <YAxis dataKey='name' scale="band" type="category" width={150} interval={0} />
@@ -93,7 +103,6 @@ const Report = (props: ReportProps) => {
                 <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
             </BarChart>
         </ResponsiveContainer>
-        <Button style={{float: 'right'}} onClick={props.closeCallback}>Close Breakdown</Button>
     </>
     );
 }
