@@ -11,11 +11,13 @@ export enum DayType {
 }
 
 const DayTypeLib = {
-
+    getDateWithoutTime(date: Date) {
+        return new Date(date.toDateString());
+    },
     setToStart(date: Date, periodType: DayType): Date {
         switch(periodType) {
             case DayType.Day:
-                return date; // why you ask for this?
+                return DayTypeLib.getDateWithoutTime(date);
             case DayType.Week:
                 return this.setToMonday(date);
             case DayType.Month:
@@ -30,16 +32,16 @@ const DayTypeLib = {
         var day = date.getDay() || 7;  
         if (day !== 1)
             date.setHours(-24 * (day - 1)); 
-        return date;
+        return DayTypeLib.getDateWithoutTime(date);
     },
     setToStartOfMonth(date: Date): Date {
         date.setDate(1);
-        return date;
+        return DayTypeLib.getDateWithoutTime(date);
     },
     setToStartOfYear(date: Date): Date {
         date.setMonth(0);
         date.setDate(1);
-        return date;
+        return DayTypeLib.getDateWithoutTime(date);
     },
     parseDayType(str: string): DayType {
         if (!str)

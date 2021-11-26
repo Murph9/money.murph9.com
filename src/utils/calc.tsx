@@ -66,6 +66,7 @@ export default class Calc {
         const key = this._createKey(type, startDate);
         let result = this.totalCache.get(key);
         if (result) {
+            console.log("used cache for", key);
             return result;
         }
         
