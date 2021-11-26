@@ -18,6 +18,11 @@ class MainFormProps {
     deleteRow: (row: JournalEntry) => void;
 }
 
+class TypeAndDate {
+    date: Date;
+    type: DayType;
+}
+
 const MainForm = (props: MainFormProps) => {
     const [edit, setEdit] = React.useState(false);
     
@@ -54,10 +59,13 @@ const MainForm = (props: MainFormProps) => {
         addEditEntry(null);
     }
 
-    const [report, setReport] = React.useState<Map<string, number>>(null);
+    const [report, setReport] = React.useState<TypeAndDate>(null);
 
     const viewReportFor = (type: DayType, date: Date) => {
-        setReport(props.calc.reportFor(type, date));
+        const td = new TypeAndDate();
+        td.type = type;
+        td.date = date;
+        setReport(td);
     }
 
     return (<>
@@ -74,7 +82,7 @@ const MainForm = (props: MainFormProps) => {
         </div>
 
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
-        {report && <Report data={report} closeCallback={() => setReport(null)} />}
+        {report && <Report calc={props.calc} date={report.date} type={report.type} closeCallback={() => setReport(null)} />}
 
         <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
         {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}
