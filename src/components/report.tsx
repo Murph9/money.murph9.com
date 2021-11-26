@@ -90,9 +90,10 @@ const Report = (props: ReportProps) => {
     
     return (<>
         <div>
-            <h4 style={{float: 'left'}}>Report for the {DayType[props.type]} of {props.date.toLocaleDateString()}</h4>
-            <Button style={{float: 'right'}} onClick={props.closeCallback}>Close Breakdown</Button>
+            <h4 style={{textAlign: 'center'}}>Report for the {DayType[props.type]} of {props.date.toLocaleDateString()}</h4>
+            <Button style={{position: 'absolute', right: '0%', marginTop: -40}} onClick={props.closeCallback}>Close Breakdown</Button>
         </div>
+        
         <ResponsiveContainer width="100%" height={Math.min(graphList.length*25, 600)}>
             <BarChart data={graphList} layout="vertical">
                 <Legend verticalAlign="top" height={36}/>
