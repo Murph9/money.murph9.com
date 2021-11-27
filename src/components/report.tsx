@@ -1,5 +1,6 @@
 import * as React from "react";
 import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
 
 import {
     BarChart,
@@ -30,7 +31,7 @@ class GraphRow {
     constructor(name: string, existing: number) {
         this.name = name;
         this.existing = existing;
-        this.income = existing > 0;
+        this.income = existing < 0;
     }
 
     sum(): number {
@@ -46,28 +47,29 @@ const Report = (props: ReportProps) => {
     let graphList: Array<GraphRow> = [];
     const names = [...new Set([...prev.keys(), ...cur.keys()])]; // get all names
     for (const name of names) {
-        if (!prev.has(name)) {
-            let value = cur.get(name);
+         if (!prev.has(name)) {
+            let value = -cur.get(name);
             let record = new GraphRow(name, 0);
             record.added = value;
             graphList.push(record);
         }
         else if (!cur.has(name)) {
-            let value = prev.get(name);
+            let value = -prev.get(name);
             let record = new GraphRow(name, 0);
             record.removed = value;
             graphList.push(record);
         } else {
             // both woo
-            let prevValue = prev.get(name);
-            let curValue = cur.get(name);
+            let prevValue = -prev.get(name);
+            let curValue = -cur.get(name);
+            const dValue = Math.abs(curValue - prevValue);
             if (prevValue < curValue) {
                 let record = new GraphRow(name, prevValue);
-                record.added = curValue - prevValue;
+                record.added = dValue;
                 graphList.push(record);
             } else if (prevValue > curValue) {
                 let record = new GraphRow(name, curValue);
-                record.removed = prevValue - curValue;
+                record.removed = dValue;
                 graphList.push(record);
             } else {
                 graphList.push(new GraphRow(name, curValue));
@@ -76,16 +78,12 @@ const Report = (props: ReportProps) => {
     }
 
     graphList = graphList.filter(x => !x.income);
-    // every thing is an expense, so show as positive
     graphList.forEach(x => {
-        x.existing *= -1;
-        x.added *= -1;
-        x.removed *= -1;
-        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word wrap &nbsp;
+        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word wrap, use &nbsp;
     });
     
     graphList.sort((x: GraphRow, y: GraphRow) => {
-        return +y.sum() - +x.sum();
+        return y.sum() - x.sum();
     });
     
     return (<>
@@ -105,6 +103,32 @@ const Report = (props: ReportProps) => {
                 <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
             </BarChart>
         </ResponsiveContainer>
+
+        <Table size="sm">
+            <thead>
+                <tr><th>Category Differences</th><th>Prev period</th><th>Current</th><th>Diff</th></tr>
+            </thead>
+            <tbody>
+                {names.map(x => {
+                    return{
+                        name: x,
+                        prevV: (-prev.get(x) || 0),
+                        curV: (-cur.get(x) || 0),
+                        dValue: (-cur.get(x) || 0) - (-prev.get(x) || 0)
+                    };
+                })
+                    .filter(x => x.dValue)
+                    .sort((x,y) => x.name.localeCompare(y.name))
+                    .map(x => 
+                        <tr>
+                            <td>{x.name}</td>
+                            <td>${x.prevV.toFixed(2)}</td>
+                            <td>${x.curV.toFixed(2)}</td>
+                            <td>${x.dValue.toFixed(2)}</td>
+                        </tr>
+                    )}
+            </tbody>
+        </Table>
     </>
     );
 }
