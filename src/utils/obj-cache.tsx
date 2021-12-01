@@ -18,8 +18,4 @@ export class ObjCache {
     }
 }
 
-// singleton, yay
-const cache: ObjCache = new ObjCache();
-
-const Cache = () => cache;
-export default Cache;
+export default ObjCache;

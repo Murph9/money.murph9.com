@@ -1,8 +1,7 @@
 import JournalEntry from '../utils/db-row';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import DateLib from './date-helpers';
-import Cache, { ObjCache } from './obj-cache';
-import { EntryId } from 'aws-sdk/clients/iotsitewise';
+import ObjCache from './obj-cache';
 
 class Range {
     row: JournalEntry;
@@ -30,8 +29,8 @@ class Range {
 export default class Calc {
     dayRanges: Array<Range>;
     categories: Array<string> = [];
-    totalCache: ObjCache = Cache();
-    rowCache: ObjCache = Cache();
+    totalCache: ObjCache = new ObjCache();
+    rowCache: ObjCache = new ObjCache();
     categoryDefaultCache: Map<string, {count: number, type: DayType}> = new Map();
 
     constructor(data: Array<JournalEntry>) {
