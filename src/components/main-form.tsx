@@ -73,10 +73,10 @@ const MainForm = (props: MainFormProps) => {
             <h1 style={{textAlign:'center'}}>
                 {`$${props.calc.totalFor(DayType.Day, new Date()).toFixed(2)}`}
                 <span style={{fontSize: '.475em'}}>/day, today</span>
-            </h1>
-            <div style={{float: 'left'}}>
+                <span style={{float: 'left'}}>
                 <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-            </div>
+                </span>
+            </h1>
 
             { edit && <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} calc={props.calc} save={handleEditClose} exit={handleEditExit} delete={handleDelete} /> }
         </div>
