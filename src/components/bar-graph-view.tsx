@@ -44,13 +44,14 @@ const BarGraphView = (props: BarGraphViewProps) => {
     
     const values = [];
     const now = DayTypeLib.setToStart(new Date(), periodType);
+    let nowValue = props.calc.totalFor(periodType, now);
     for (let i = 0; i < barCount; i++) {
         const periodStart = DayTypeLib.offsetDateBy(now, periodType, i + graphOffset + periodOffset);
         const value = props.calc.totalFor(periodType, periodStart);
         const obj: any = { name: periodStart.toLocaleDateString(), amount: value, amountFormatted: `$${value.toFixed(2)}`, date: periodStart };
         if (now.getTime() == periodStart.getTime()) {
             obj.current = true;
-            obj.amount > 0 ? obj.label = '🠗' : obj.label = '🠕';    
+            obj.amount > 0 ? obj.label = '🠗' : obj.label = '🠕';
         } else if (now.getTime() < periodStart.getTime())
             obj.future = true;
         values.push(obj);
@@ -63,25 +64,27 @@ const BarGraphView = (props: BarGraphViewProps) => {
                 <Col>
                     <Button variant="primary" onClick={subOffset} style={{float: 'right'}}>-</Button>
                 </Col>
-                <Col>
-                <Form.Select value={periodType} onChange={(e) =>  {
-                    setPeriodType(DayTypeLib.parseDayType(e.currentTarget.value));
-                    setPeriodOffset(0);
-                }}>
-                    <option value={DayType.Day}>Day</option>
-                    <option value={DayType.Week}>Week</option>
-                    <option value={DayType.Month}>Month</option>
-                    <option value={DayType.Year}>Year</option>
-                </Form.Select>
+                    <Col>
+                    <Form.Select value={periodType} onChange={(e) =>  {
+                        setPeriodType(DayTypeLib.parseDayType(e.currentTarget.value));
+                        setPeriodOffset(0);
+                    }}>
+                        <option value={DayType.Day}>Day</option>
+                        <option value={DayType.Week}>Week</option>
+                        <option value={DayType.Month}>Month</option>
+                        <option value={DayType.Year}>Year</option>
+                    </Form.Select>
                 </Col>
-                <Col><Button variant="primary" onClick={incOffset} style={{float: 'left'}}>+</Button></Col>
+                <Col>
+                    <Button variant="primary" onClick={incOffset} style={{float: 'left'}}>+</Button>
+                </Col>
             </Row>
         </Container>
+
         <ResponsiveContainer width="100%" height={300}>
-            
             <BarChart data={values} margin={{ top: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <ReferenceLine y={0} stroke="#000" />
+                <ReferenceLine y={nowValue} stroke="#000" />
                 <XAxis dataKey={'name'}/>
                 <Bar dataKey="amount" isAnimationActive={false} onClick={(data, index) => {
                     props.viewReport(periodType, data.date);
@@ -94,7 +97,6 @@ const BarGraphView = (props: BarGraphViewProps) => {
                     <LabelList dataKey="amountFormatted" position="center" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
                 </Bar>
             </BarChart>
-            
         </ResponsiveContainer>
     </div>
     );
