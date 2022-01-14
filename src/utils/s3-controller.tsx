@@ -74,14 +74,3 @@ export default class AwsS3Service {
         });
     }
 }
-
-function lTrim(str: string, pre: string) {
-    if (str.indexOf(pre) === 0) {
-        str = str.slice(pre.length);
-    }
-    return str;
-}
-
-function strBefore(str: string, t: string) {
-    return str.substr(0, str.indexOf(t));
-}
