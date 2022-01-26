@@ -120,7 +120,7 @@ const EditForm = (props: EditFormProps) => {
                         <InputGroup>
                             <InputGroup.Text>$</InputGroup.Text>
                             <FloatingLabel label="Amount">
-                                <Form.Control type="number" defaultValue={getValueOf('amount', 0)} ref={amount} onChange={setUpdatedPerDay}/>
+                                <Form.Control type="number" defaultValue={getValueOf('amount', 0)} ref={amount} onChange={setUpdatedPerDay} autoFocus={!props.entry} />
                             </FloatingLabel>
                         </InputGroup>
                     </Col>
