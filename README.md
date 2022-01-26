@@ -21,6 +21,8 @@ project root> gatsby develop
 
 project root> gatsby build
 project root> aws s3 sync public/. s3://money.murph9.com --delete
+
+project root> aws cloudfront create-invalidation --distribution-id EDWBAVRGQTLM7 --paths "/*"
 ```
 
 ---
