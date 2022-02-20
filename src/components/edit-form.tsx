@@ -55,6 +55,11 @@ const EditForm = (props: EditFormProps) => {
                 var defaults = props.calc.getCategoryDefault(e[0].label);
                 periodType.current.value = defaults.type.toString();
                 periodCount.current.value = defaults.count.toString();
+                
+                //hide android keyboard
+                if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
             }
         }
     }
