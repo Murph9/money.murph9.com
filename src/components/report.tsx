@@ -1,6 +1,8 @@
 import * as React from "react";
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 
 import {
     BarChart,
@@ -42,6 +44,7 @@ class GraphRow {
 const Report = (props: ReportProps) => {
 
     const [calcDiff, setCalcDiff] = React.useState(false);
+    const [showAll, setShowAll] = React.useState(false);
     const cur = props.calc.reportFor(props.type, props.date);
 
     let prev = new Map<string, number>();
@@ -87,25 +90,27 @@ const Report = (props: ReportProps) => {
     }
 
     graphList = graphList.filter(x => !x.income);
-    graphList.forEach(x => {
-        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word wrap, use &nbsp;
-    });
-    
     graphList.sort((x: GraphRow, y: GraphRow) => {
         return y.sum() - x.sum();
     });
+    graphList.forEach(x => {
+        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word wrap, use &nbsp;
+    });
+
+    const graphCount = showAll ? graphList.length : 10;
     
     return (<>
         <div>
             <h4>Report for the {DayType[props.type]} of {props.date.toLocaleDateString()}</h4>
             <div style={{position: 'absolute', right: '0%', marginTop: -40}}>
-                <Button onClick={() => setCalcDiff(!calcDiff)}>View Diff</Button>
+                <ButtonGroup><ToggleButton id="showall-check" variant="outline-primary" value="1" type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.currentTarget.checked)}>Show All</ToggleButton></ButtonGroup>
+                <ButtonGroup><ToggleButton id="viewdiff-check" variant="outline-primary" value="1" type="checkbox" checked={calcDiff} onChange={(e) => setCalcDiff(e.currentTarget.checked)}>View Diff</ToggleButton></ButtonGroup>
                 <Button variant="secondary" onClick={props.closeCallback}>Close Breakdown</Button>
             </div>
         </div>
         
-        <ResponsiveContainer width="100%" height={Math.min(graphList.length*25, 600)}>
-            <BarChart data={graphList} layout="vertical">
+        <ResponsiveContainer width="100%" height={graphCount*25+80}>
+            <BarChart data={graphList.slice(0, graphCount)} layout="vertical">
                 <Legend verticalAlign="top" height={36}/>
                 <XAxis dataKey='existing' type="number"/>
                 <YAxis dataKey='name' scale="band" type="category" width={150} interval={0} />
