@@ -15,30 +15,13 @@ import {
   } from 'recharts';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
+import ReportGraph, { GraphRow } from "./report-graph";
 
 class ReportProps {
     type: DayType;
     date: Date;
     calc: Calc;
     closeCallback: () => void;
-}
-
-class GraphRow {
-    name: string;
-    existing: number;
-    income: boolean;
-    added: number = 0;
-    removed: number = 0;
-
-    constructor(name: string, existing: number) {
-        this.name = name;
-        this.existing = existing;
-        this.income = existing < 0;
-    }
-
-    sum(): number {
-        return this.existing + this.added; // this.removed doesn't play because its not the current value
-    }
 }
 
 const Report = (props: ReportProps) => {
@@ -106,10 +89,6 @@ const Report = (props: ReportProps) => {
     });
 
     const graphCount = showAll ? graphList.length : 10;
-    let graphMax: number = 0;
-    if (graphList.length > 0) {
-        graphMax = graphList[0].sum();
-    }
     
     return (<>
         <div>
@@ -122,38 +101,9 @@ const Report = (props: ReportProps) => {
             </div>
         </div>
         
-        {showIncome && 
-            <ResponsiveContainer width="100%" height={incomeList.length*25+80}>
-                <BarChart data={incomeList} layout="vertical" id="a">
-                    <Legend verticalAlign="top" height={36}/>
-                    <XAxis dataKey='existing' type="number" domain={[0, 'auto']} />
-                    <YAxis dataKey='name' scale="band" type="category" width={150} interval={0} />
-                    <Bar dataKey="existing" isAnimationActive={false} fill="#8884d8" barSize={50} stackId="income" />
-                    {calcDiff &&
-                    <>
-                        <Bar dataKey="added" isAnimationActive={false} fill="#84d888" barSize={50} stackId="income" />
-                        <Bar dataKey="removed" isAnimationActive={false} fill="#844444" barSize={50} stackId="income" />
-                    </>
-                    }
-                    <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
-                </BarChart>
-            </ResponsiveContainer>
-        }
+        {showIncome && <ReportGraph data={incomeList} showDiff={calcDiff} />}
 
-        <ResponsiveContainer width="100%" height={graphCount*25+80}>
-            <BarChart data={graphList.slice(0, graphCount)} layout="vertical" id="b">
-                <Legend verticalAlign="top" height={36}/>
-                <XAxis dataKey='existing' type="number" domain={[0, graphMax]}/>
-                <YAxis dataKey='name' scale="band" type="category" width={150} interval={0} />
-                <Bar dataKey="existing" isAnimationActive={false} fill="#8884d8" barSize={50} stackId="main" />
-                {calcDiff &&
-                <>
-                    <Bar dataKey="added" isAnimationActive={false} fill="#84d888" barSize={50} stackId="main" />
-                    <Bar dataKey="removed" isAnimationActive={false} fill="#844444" barSize={50} stackId="main" />
-                </>}
-                <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
-            </BarChart>
-        </ResponsiveContainer>
+        <ReportGraph data={graphList} showDiff={calcDiff} maxCount={graphCount} />
 
         {calcDiff && 
             <Table size="sm">
