@@ -1,21 +1,12 @@
 import * as React from "react";
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 
-import {
-    BarChart,
-    Bar,
-    ResponsiveContainer,
-    XAxis,
-    YAxis,
-    Tooltip,
-    Legend 
-  } from 'recharts';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
 import ReportGraph, { GraphRow } from "./report-graph";
+import ReportDiff from "./report-diff";
 
 class ReportProps {
     type: DayType;
@@ -36,59 +27,17 @@ const Report = (props: ReportProps) => {
     if (calcDiff) {
         prev = props.calc.reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
     }
-    let graphList: Array<GraphRow> = [];
+    
     const names = [...new Set([...prev.keys(), ...cur.keys()])]; // get all names
-    for (const name of names) {
-        if (!calcDiff) {
-            let value = -cur.get(name);
-            graphList.push(new GraphRow(name, value));
-            continue;
-        }
-        if (!prev.has(name)) { // only added
-            let value = -cur.get(name);
-            let record = new GraphRow(name, 0);
-            record.added = value;
-            graphList.push(record);
-        }
-        else if (!cur.has(name)) { // only removed
-            let value = -prev.get(name);
-            let record = new GraphRow(name, 0);
-            record.removed = value;
-            graphList.push(record);
-        } else {
-            // both
-            let prevValue = -prev.get(name);
-            let curValue = -cur.get(name);
-            const dValue = Math.abs(curValue - prevValue);
-            if (prevValue < curValue) {
-                let record = new GraphRow(name, prevValue);
-                record.added = dValue;
-                graphList.push(record);
-            } else if (prevValue > curValue) {
-                let record = new GraphRow(name, curValue);
-                record.removed = dValue;
-                graphList.push(record);
-            } else {
-                graphList.push(new GraphRow(name, curValue));
-            }
-        }
-    }
+    const entryList = generateGraphRows(names, cur, prev, calcDiff);
 
-    let incomeList: Array<GraphRow> = [];
-    if (showIncome) {
-        incomeList = graphList.filter(x => x.income);
-        incomeList.forEach(x => {x.added *= -1; x.existing *= -1; x.removed *= -1});
-    }
+    const incomeList: Array<GraphRow> = entryList.filter(x => x.income);
+    incomeList.forEach(x => {x.added *= -1; x.existing *= -1; x.removed *= -1});
 
-    graphList = graphList.filter(x => !x.income);
-    graphList.sort((x: GraphRow, y: GraphRow) => {
+    const expenseList = entryList.filter(x => !x.income);
+    expenseList.sort((x: GraphRow, y: GraphRow) => {
         return y.sum() - x.sum();
     });
-    graphList.forEach(x => {
-        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word wrap, use &nbsp;
-    });
-
-    const graphCount = showAll ? graphList.length : 10;
     
     return (<>
         <div>
@@ -103,36 +52,57 @@ const Report = (props: ReportProps) => {
         
         {showIncome && <ReportGraph data={incomeList} showDiff={calcDiff} />}
 
-        <ReportGraph data={graphList} showDiff={calcDiff} maxCount={graphCount} />
+        <ReportGraph data={expenseList} maxCount={showAll ? expenseList.length : 10} showDiff={calcDiff} />
 
-        {calcDiff && 
-            <Table size="sm">
-                <thead>
-                    <tr><th>Category Differences</th><th>Prev period</th><th>Current</th><th>Diff</th></tr>
-                </thead>
-                <tbody>
-                    {names.map(x => {
-                        return{
-                            name: x,
-                            prevV: (-prev.get(x) || 0),
-                            curV: (-cur.get(x) || 0),
-                            dValue: (-cur.get(x) || 0) - (-prev.get(x) || 0)
-                        };
-                    })
-                        .filter(x => x.dValue)
-                        .sort((x,y) => x.name.localeCompare(y.name))
-                        .map(x => 
-                            <tr>
-                                <td>{x.name}</td>
-                                <td>${x.prevV.toFixed(2)}</td>
-                                <td>${x.curV.toFixed(2)}</td>
-                                <td>${x.dValue.toFixed(2)}</td>
-                            </tr>
-                        )}
-                </tbody>
-            </Table>
-        }
+        {calcDiff && <ReportDiff names={names} prev={prev} cur={cur} /> }
     </>
     );
 }
 export default Report;
+
+
+function generateGraphRows(names: string[], cur: Map<string, number>, prev: Map<string, number>, calcDiff: boolean): Array<GraphRow> {
+    if (!calcDiff) {
+        return names.map(x => {
+            let value = -cur.get(x);
+            return new GraphRow(x, value);
+        });
+    }
+    
+    const entryList: Array<GraphRow> = [];
+    for (const name of names) {
+        if (!prev.has(name)) {
+            // only added
+            let value = -cur.get(name);
+            let record = new GraphRow(name, 0);
+            record.added = value;
+            entryList.push(record);
+            
+        } else if (!cur.has(name)) {
+            // only removed
+            let value = -prev.get(name);
+            let record = new GraphRow(name, 0);
+            record.removed = value;
+            entryList.push(record);
+
+        } else {
+            // both
+            let prevValue = -prev.get(name);
+            let curValue = -cur.get(name);
+            const dValue = Math.abs(curValue - prevValue);
+            if (prevValue < curValue) {
+                let record = new GraphRow(name, prevValue);
+                record.added = dValue;
+                entryList.push(record);
+            } else if (prevValue > curValue) {
+                let record = new GraphRow(name, curValue);
+                record.removed = dValue;
+                entryList.push(record);
+            } else {
+                entryList.push(new GraphRow(name, curValue));
+            }
+        }
+    }
+    
+    return entryList;
+}

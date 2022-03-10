@@ -43,6 +43,10 @@ const ReportGraph = (props: ReportGraphProps) => {
     const graphMax = Math.ceil(props.data[0].sum());
     const graphCount = Math.min(props.data.length, count);
 
+    props.data.forEach(x => {
+        x.name = x.name.replace(/\s/g, '\u00A0'); // stupid word graph wrap, use &nbsp;
+    });
+
     return <ResponsiveContainer width="100%" height={graphCount*25+80}>
         <BarChart data={props.data.slice(0, graphCount)} layout="vertical" id="b">
             <Legend verticalAlign="top" height={36}/>
