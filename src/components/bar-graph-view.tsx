@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import DayTypeLib, { DayType } from "../utils/day-type";
+import InputGroup from 'react-bootstrap/InputGroup';
 
 import Button from 'react-bootstrap/Button';
 
@@ -61,23 +62,23 @@ const BarGraphView = (props: BarGraphViewProps) => {
     <div>
         <Container>
             <Row>
-                <Col>
-                    <Button variant="primary" onClick={subOffset} style={{float: 'right'}}>-</Button>
+                <Col></Col>
+                <Col xs={6}>
+                    <InputGroup>
+                        <Button variant="primary" onClick={subOffset} style={{float: 'right'}}>&lt;-</Button>
+                        <Form.Select value={periodType} onChange={(e) =>  {
+                            setPeriodType(DayTypeLib.parseDayType(e.currentTarget.value));
+                            setPeriodOffset(0);
+                        }}>
+                            <option value={DayType.Day}>Day</option>
+                            <option value={DayType.Week}>Week</option>
+                            <option value={DayType.Month}>Month</option>
+                            <option value={DayType.Year}>Year</option>
+                        </Form.Select>
+                        <Button variant="primary" onClick={incOffset} style={{float: 'left'}}>-&gt;</Button>
+                    </InputGroup>
                 </Col>
-                    <Col>
-                    <Form.Select value={periodType} onChange={(e) =>  {
-                        setPeriodType(DayTypeLib.parseDayType(e.currentTarget.value));
-                        setPeriodOffset(0);
-                    }}>
-                        <option value={DayType.Day}>Day</option>
-                        <option value={DayType.Week}>Week</option>
-                        <option value={DayType.Month}>Month</option>
-                        <option value={DayType.Year}>Year</option>
-                    </Form.Select>
-                </Col>
-                <Col>
-                    <Button variant="primary" onClick={incOffset} style={{float: 'left'}}>+</Button>
-                </Col>
+                <Col></Col>
             </Row>
         </Container>
 
