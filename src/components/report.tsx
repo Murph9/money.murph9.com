@@ -2,6 +2,9 @@ import * as React from "react";
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
 
 import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
@@ -40,15 +43,19 @@ const Report = (props: ReportProps) => {
     });
     
     return (<>
-        <div>
-            <h4>Report for the {DayType[props.type]} of {props.date.toLocaleDateString()}</h4>
-            <div style={{position: 'absolute', right: '0%', marginTop: -40}}>
-                <ButtonGroup><ToggleButton id="showincome-check" variant="outline-primary" value="1" type="checkbox" checked={showIncome} onChange={(e) => setShowIncome(e.currentTarget.checked)}>Show Income</ToggleButton></ButtonGroup>
-                <ButtonGroup><ToggleButton id="showall-check" variant="outline-primary" value="1" type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.currentTarget.checked)}>Show All</ToggleButton></ButtonGroup>
-                <ButtonGroup><ToggleButton id="viewdiff-check" variant="outline-primary" value="1" type="checkbox" checked={calcDiff} onChange={(e) => setCalcDiff(e.currentTarget.checked)}>View Diff</ToggleButton></ButtonGroup>
-                <Button variant="secondary" onClick={props.closeCallback}>Close Breakdown</Button>
-            </div>
-        </div>
+        <Container>
+            <Row>
+                <Col><h4>Report: {DayType[props.type]} of {props.date.toLocaleDateString()}</h4></Col>
+                <Col col="1">
+                    <ButtonGroup>
+                        <ToggleButton size="sm" id="showincome-check" variant="outline-primary" value="1" type="checkbox" checked={showIncome} onChange={(e) => setShowIncome(e.currentTarget.checked)}>Show Income</ToggleButton>
+                        <ToggleButton size="sm" id="showall-check" variant="outline-primary" value="1" type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.currentTarget.checked)}>Show All</ToggleButton>
+                        <ToggleButton size="sm" id="viewdiff-check" variant="outline-primary" value="1" type="checkbox" checked={calcDiff} onChange={(e) => setCalcDiff(e.currentTarget.checked)}>View Diff</ToggleButton>
+                    </ButtonGroup>
+                    <Button size="sm" variant="secondary" onClick={props.closeCallback}>Close</Button>
+                </Col>
+            </Row>
+        </Container>
         
         {showIncome && <ReportGraph data={incomeList} showDiff={calcDiff} />}
 
