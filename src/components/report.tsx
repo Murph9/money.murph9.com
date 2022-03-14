@@ -1,15 +1,19 @@
 import * as React from "react";
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import ToggleButton from 'react-bootstrap/ToggleButton';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 
 import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
-import ReportGraph, { GraphRow } from "./report-graph";
+
 import ReportDiff from "./report-diff";
+import ReportGraph, { GraphRow } from "./report-graph";
+import ReportTable from "./report-table";
 
 class ReportProps {
     type: DayType;
@@ -57,9 +61,16 @@ const Report = (props: ReportProps) => {
             </Row>
         </Container>
         
-        {showIncome && <ReportGraph data={incomeList} showDiff={calcDiff} />}
-
-        <ReportGraph data={expenseList} maxCount={showAll ? expenseList.length : 10} showDiff={calcDiff} />
+        <Tabs defaultActiveKey="graph">
+            <Tab eventKey="graph" title="Graph View">
+                {showIncome && <ReportGraph data={incomeList} showDiff={calcDiff} />}
+                <ReportGraph data={expenseList} maxCount={showAll ? expenseList.length : 10} showDiff={calcDiff} />
+            </Tab>
+            <Tab eventKey="table" title="Table View">
+                {showIncome && <ReportTable data={incomeList} maxCount={incomeList.length} />}
+                <ReportTable data={expenseList} maxCount={showAll ? expenseList.length : 10} />
+            </Tab>
+        </Tabs>
 
         {calcDiff && <ReportDiff names={names} prev={prev} cur={cur} /> }
     </>
