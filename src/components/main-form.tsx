@@ -32,7 +32,7 @@ const MainForm = (props: MainFormProps) => {
             throw new Error("Returned object was not the right type " + obj);
         }
 
-        setShowToast("Record saved, yay");
+        setShowToast("Record saved. Yay");
         addEditEntry(null);
         props.editRow(obj);
     }
@@ -75,6 +75,8 @@ const MainForm = (props: MainFormProps) => {
                 <span style={{fontSize: '.475em'}}>/day, today</span>
                 <span style={{float: 'left'}}>
                 <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
+
+                <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
                 </span>
             </h1>
 
@@ -84,8 +86,7 @@ const MainForm = (props: MainFormProps) => {
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
         {report && <Report calc={props.calc} date={report.date} type={report.type} closeCallback={() => setReport(null)} />}
 
-        <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
-        {list ? <FullRecordList data={props.data} edit={handleEditEntry}/> : null}
+        <FullRecordList data={props.data} show={list} edit={handleEditEntry} exit={() => setList(false)}/>
 
         <ToastContainer className="p-3" position={'top-center'}>
             <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={2000} autohide bg='snfo'>
