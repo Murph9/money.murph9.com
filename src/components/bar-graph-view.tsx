@@ -95,7 +95,8 @@ const BarGraphView = (props: BarGraphViewProps) => {
                     ))}
                     
                     <LabelList dataKey="label" position="top" style={{ fill: 'rgba(0, 0, 0, 0.87)', fontSize: '3em' }}/>
-                    <LabelList dataKey="amountFormatted" position="center" style={{ fill: 'rgba(0, 0, 0, 0.87)' }}/>
+                    <LabelList dataKey="amountFormatted" position="center" style={{ fill: 'rgba(0, 0, 0, 0.87)', pointerEvents: 'none' }}/>
+                    {/* ignore pointer events to allowing the bar onClick to work https://github.com/recharts/recharts/issues/1103 */}
                 </Bar>
             </BarChart>
         </ResponsiveContainer>
