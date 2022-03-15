@@ -73,12 +73,17 @@ const MainForm = (props: MainFormProps) => {
             <h1 style={{textAlign:'center'}}>
                 {`$${props.calc.totalFor(DayType.Day, new Date()).toFixed(2)}`}
                 <span style={{fontSize: '.475em'}}>/day, today</span>
-                <span style={{float: 'left'}}>
-                <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
-
-                <Button variant="secondary" onClick={() => setList(!list)}>View All Records</Button>
-                </span>
+                
             </h1>
+            <span style={{float: 'left'}}>
+                <Button variant="primary" onClick={() => setEdit(true)}>Add</Button>
+            </span>
+
+            {!list &&
+                <span style={{float: 'right'}}>
+                    <Button variant="secondary" onClick={() => setList(!list)}>View All</Button>
+                </span>
+            }
 
             { edit && <EditForm key={new Date().getTime()} show={edit} entry={editEntry} categoryList={props.calc.categories} calc={props.calc} save={handleEditClose} exit={handleEditExit} delete={handleDelete} /> }
         </div>
@@ -86,6 +91,7 @@ const MainForm = (props: MainFormProps) => {
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
         {report && <Report calc={props.calc} date={report.date} type={report.type} closeCallback={() => setReport(null)} />}
 
+        
         <FullRecordList data={props.data} show={list} edit={handleEditEntry} exit={() => setList(false)}/>
 
         <ToastContainer className="p-3" position={'top-center'}>

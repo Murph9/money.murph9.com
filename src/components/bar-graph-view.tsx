@@ -63,7 +63,7 @@ const BarGraphView = (props: BarGraphViewProps) => {
         <Container>
             <Row>
                 <Col></Col>
-                <Col xs={6}>
+                <Col xs={9} md={6} xl={4}>
                     <InputGroup>
                         <Button variant="primary" onClick={subOffset} style={{float: 'right'}}>&lt;-</Button>
                         <Form.Select value={periodType} onChange={(e) =>  {
