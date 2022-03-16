@@ -11,7 +11,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
 
-import ReportDiff from "../components/report-diff";
+import ReportDiff from "../components/report-table";
 import ReportGraph from "../components/report-graph";
 
 class ReportProps {

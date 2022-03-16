@@ -1,7 +1,7 @@
 import * as React from "react";
 import Table from 'react-bootstrap/Table';
 
-class ReportDiffProps {
+class ReportTableProps {
     data: Array<ReportRow>;
     showDiff: boolean;
     maxCount?: number;
@@ -9,7 +9,7 @@ class ReportDiffProps {
 
 import { ReportRow } from "../screen/report";
 
-const ReportDiff = (props: ReportDiffProps) => {
+const ReportTable = (props: ReportTableProps) => {
     const count = Math.min(props.data.length, props.maxCount);
 
     if (!props.showDiff) {
@@ -62,4 +62,4 @@ function formatDiff(value: number): string {
     return "";
 }
 
-export default ReportDiff;
+export default ReportTable;
