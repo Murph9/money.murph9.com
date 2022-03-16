@@ -5,7 +5,7 @@ import Toast from 'react-bootstrap/Toast';
 
 import JournalEntry from "../utils/db-row";
 import Calc from "../utils/calc";
-import EditForm from './edit-form';
+import EditForm from '../screen/edit-form';
 import Report from './report';
 import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';

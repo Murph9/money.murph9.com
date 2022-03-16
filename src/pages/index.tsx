@@ -2,8 +2,8 @@ import * as React from "react";
 import Button from 'react-bootstrap/Button';
 import { graphql } from "gatsby";
 
-import LoginForm from "../components/login-form";
-import MainForm from "../components/main-form";
+import LoginForm from "../screen/login-form";
+import MainForm from "../screen/main-form";
 import AwsS3Service, {AwsS3Config} from "../utils/s3-controller";
 import DataService from "../utils/db-repo";
 import JournalEntry from "../utils/db-row";

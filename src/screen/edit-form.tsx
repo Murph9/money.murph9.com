@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 
 import JournalEntry from "../utils/db-row";
 import DayTypeLib, { DayType } from "../utils/day-type";
-import TypeAhead from "./typeahead.js";
+import TypeAhead from "../components/typeahead.js";
 import DateLib from "../utils/date-helpers";
 import Calc from "../utils/calc";
 
