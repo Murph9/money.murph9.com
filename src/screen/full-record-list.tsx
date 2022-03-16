@@ -42,7 +42,8 @@ const FullRecordList = (props: RecordListProps) => {
     const [pageNum, setPageNum] = React.useState(0);
     const [filter, setFilter] = React.useState("");
 
-    const data = props.data.filter(x => x.category.includes(filter)).sort((x: JournalEntry, y: JournalEntry) => {
+    const searchExp =  new RegExp(filter, "i");
+    const data = props.data.filter(x => searchExp.test(x.category)).sort((x: JournalEntry, y: JournalEntry) => {
         return +y.from - +x.from;
     });
 
