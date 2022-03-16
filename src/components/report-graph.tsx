@@ -9,33 +9,16 @@ import {
     Legend 
   } from 'recharts';
 
+import { ReportRow } from "../screen/report";
 
 class ReportGraphProps {
-    data: Array<GraphRow>;
+    data: Array<ReportRow>;
     showDiff: boolean;
     maxCount?: number;
 }
 
-export class GraphRow {
-    name: string;
-    existing: number;
-    income: boolean;
-    added: number = 0;
-    removed: number = 0;
-
-    constructor(name: string, existing: number) {
-        this.name = name;
-        this.existing = existing;
-        this.income = existing < 0;
-    }
-
-    sum(): number {
-        return this.existing + this.added; // this.removed doesn't play because its not the current value
-    }
-}
-
 const ReportGraph = (props: ReportGraphProps) => {
-    props.data.sort((x: GraphRow, y: GraphRow) => {
+    props.data.sort((x: ReportRow, y: ReportRow) => {
         return y.sum() - x.sum();
     });
 

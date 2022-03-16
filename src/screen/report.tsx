@@ -12,14 +12,31 @@ import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
 
 import ReportDiff from "../components/report-diff";
-import ReportGraph, { GraphRow } from "../components/report-graph";
-import ReportTable from "../components/report-table";
+import ReportGraph from "../components/report-graph";
 
 class ReportProps {
     type: DayType;
     date: Date;
     calc: Calc;
     closeCallback: () => void;
+}
+
+export class ReportRow {
+    name: string;
+    existing: number;
+    income: boolean;
+    added: number = 0;
+    removed: number = 0;
+
+    constructor(name: string, existing: number) {
+        this.name = name;
+        this.existing = existing;
+        this.income = existing < 0;
+    }
+
+    sum(): number {
+        return this.existing + this.added; // this.removed doesn't play because its not the current value
+    }
 }
 
 const Report = (props: ReportProps) => {
@@ -29,22 +46,16 @@ const Report = (props: ReportProps) => {
     const [showIncome, setShowIncome] = React.useState(false);
 
     const cur = props.calc.reportFor(props.type, props.date);
-
-    let prev = new Map<string, number>();
-    if (calcDiff) {
-        prev = props.calc.reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
-    }
+    const prev = props.calc.reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
     
-    const names = [...new Set([...prev.keys(), ...cur.keys()])]; // get all names
-    const entryList = generateGraphRows(names, cur, prev, calcDiff);
+    const entryList = generateReportRows(cur, prev, calcDiff);
 
-    const incomeList: Array<GraphRow> = entryList.filter(x => x.income);
+    const incomeList: Array<ReportRow> = entryList.filter(x => x.income);
     incomeList.forEach(x => {x.added *= -1; x.existing *= -1; x.removed *= -1});
 
     const expenseList = entryList.filter(x => !x.income);
-    expenseList.sort((x: GraphRow, y: GraphRow) => {
-        return y.sum() - x.sum();
-    });
+
+    const maxCount = showAll ? expenseList.length : 10;
     
     return (<>
         <Container>
@@ -52,9 +63,9 @@ const Report = (props: ReportProps) => {
                 <Col><h4>Report: {DayType[props.type]} of {props.date.toLocaleDateString()}</h4></Col>
                 <Col col="1">
                     <ButtonGroup>
-                        <ToggleButton size="sm" id="showincome-check" variant="outline-primary" value="1" type="checkbox" checked={showIncome} onChange={(e) => setShowIncome(e.currentTarget.checked)}>Show Income</ToggleButton>
-                        <ToggleButton size="sm" id="showall-check" variant="outline-primary" value="1" type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.currentTarget.checked)}>Show All</ToggleButton>
-                        <ToggleButton size="sm" id="viewdiff-check" variant="outline-primary" value="1" type="checkbox" checked={calcDiff} onChange={(e) => setCalcDiff(e.currentTarget.checked)}>View Diff</ToggleButton>
+                        <ToggleButton size="sm" id="showincome-check" variant="outline-primary" value="1" type="checkbox" checked={showIncome} onChange={(e) => setShowIncome(e.currentTarget.checked)}>Income</ToggleButton>
+                        <ToggleButton size="sm" id="showall-check" variant="outline-primary" value="1" type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.currentTarget.checked)}>All</ToggleButton>
+                        <ToggleButton size="sm" id="viewdiff-check" variant="outline-primary" value="1" type="checkbox" checked={calcDiff} onChange={(e) => setCalcDiff(e.currentTarget.checked)}>Diff</ToggleButton>
                     </ButtonGroup>
                     <Button size="sm" variant="secondary" onClick={props.closeCallback}>Close</Button>
                 </Col>
@@ -64,42 +75,42 @@ const Report = (props: ReportProps) => {
         <Tabs defaultActiveKey="graph">
             <Tab eventKey="graph" title="Graph View">
                 {showIncome && <ReportGraph data={incomeList} showDiff={calcDiff} />}
-                <ReportGraph data={expenseList} maxCount={showAll ? expenseList.length : 10} showDiff={calcDiff} />
+                <ReportGraph data={expenseList} maxCount={maxCount} showDiff={calcDiff} />
             </Tab>
             <Tab eventKey="table" title="Table View">
-                {showIncome && <ReportTable data={incomeList} maxCount={incomeList.length} />}
-                <ReportTable data={expenseList} maxCount={showAll ? expenseList.length : 10} />
+                {showIncome && <ReportDiff data={incomeList} maxCount={incomeList.length} showDiff={calcDiff} />}
+                <ReportDiff data={expenseList} maxCount={maxCount} showDiff={calcDiff} />
             </Tab>
         </Tabs>
-
-        {calcDiff && <ReportDiff names={names} prev={prev} cur={cur} /> }
     </>
     );
 }
 export default Report;
 
 
-function generateGraphRows(names: string[], cur: Map<string, number>, prev: Map<string, number>, calcDiff: boolean): Array<GraphRow> {
+function generateReportRows(cur: Map<string, number>, prev: Map<string, number>, calcDiff: boolean): Array<ReportRow> {
     if (!calcDiff) {
-        return names.map(x => {
+        return [...cur.keys()].map(x => {
             let value = -cur.get(x);
-            return new GraphRow(x, value);
+            return new ReportRow(x, value);
         });
     }
+
+    const names = [...new Set([...prev.keys(), ...cur.keys()])];
     
-    const entryList: Array<GraphRow> = [];
+    const entryList: Array<ReportRow> = [];
     for (const name of names) {
         if (!prev.has(name)) {
             // only added
             let value = -cur.get(name);
-            let record = new GraphRow(name, 0);
+            let record = new ReportRow(name, 0);
             record.added = value;
             entryList.push(record);
             
         } else if (!cur.has(name)) {
             // only removed
             let value = -prev.get(name);
-            let record = new GraphRow(name, 0);
+            let record = new ReportRow(name, 0);
             record.removed = value;
             entryList.push(record);
 
@@ -109,15 +120,15 @@ function generateGraphRows(names: string[], cur: Map<string, number>, prev: Map<
             let curValue = -cur.get(name);
             const dValue = Math.abs(curValue - prevValue);
             if (prevValue < curValue) {
-                let record = new GraphRow(name, prevValue);
+                let record = new ReportRow(name, prevValue);
                 record.added = dValue;
                 entryList.push(record);
             } else if (prevValue > curValue) {
-                let record = new GraphRow(name, curValue);
+                let record = new ReportRow(name, curValue);
                 record.removed = dValue;
                 entryList.push(record);
             } else {
-                entryList.push(new GraphRow(name, curValue));
+                entryList.push(new ReportRow(name, curValue));
             }
         }
     }
