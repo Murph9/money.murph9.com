@@ -66,8 +66,8 @@ const FullRecordList = (props: RecordListProps) => {
     return <Modal show={props.show} onHide={props.exit} size="xl" animation={false}>
         <Modal.Header closeButton>
             <Container>
+                <Row><Col><h2>All Record Search</h2></Col></Row>
                 <Row>
-                    <Col><h2>All Record Search</h2></Col>
                     <Col>
                         <Form.Control value={filter} onChange={(e) => setFilter(e.currentTarget.value)} placeholder="Filter below"/>
                     </Col>
