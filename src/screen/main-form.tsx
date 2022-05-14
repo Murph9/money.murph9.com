@@ -10,6 +10,7 @@ import Report from './report';
 import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';
 import { DayType } from "../utils/day-type";
+import RecordsToday from "../components/records-today";
 
 class MainFormProps {
     data: Array<JournalEntry>;
@@ -93,6 +94,8 @@ const MainForm = (props: MainFormProps) => {
 
         
         <FullRecordList data={props.data} show={list} edit={handleEditEntry} exit={() => setList(false)}/>
+
+        <RecordsToday calc={props.calc} />
 
         <ToastContainer className="p-3" position={'top-center'}>
             <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={2000} autohide bg='snfo'>
