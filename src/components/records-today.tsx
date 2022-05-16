@@ -19,7 +19,7 @@ const RecordsToday = (props: RecordsTodayProps) => {
 
     const formattedRecords = recordsToday.map(x =>
         <div>
-            {x.category} <code>${x.amount.toFixed(2)}</code> for <code>${Math.abs(x.calcPerDay()).toFixed(2)}</code>/d
+            - {x.category} <code>${x.amount.toFixed(2)}</code> for <code>${Math.abs(x.calcPerDay()).toFixed(2)}</code>/d
         </div>
         );
 
