@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';

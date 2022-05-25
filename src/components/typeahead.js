@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 
 // sadly the typeahead library in jsx wanted every property to be set

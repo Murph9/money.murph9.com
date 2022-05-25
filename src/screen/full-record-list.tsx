@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Pagination from 'react-bootstrap/Pagination';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
