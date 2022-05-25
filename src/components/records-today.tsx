@@ -13,7 +13,7 @@ const RecordsToday = (props: RecordsTodayProps) => {
     const today = DateLib.treatAsUTC(DayTypeLib.setToStart(new Date(), DayType.Day));
     const recordsToday = props.calc.rowsForDay(today).filter(x => x.from.getTime() === today.getTime());
 
-    if (!recordsToday || recordsToday.length < 0) {
+    if (!recordsToday || recordsToday.length < 1) {
         return <></>;
     }
 
@@ -24,7 +24,6 @@ const RecordsToday = (props: RecordsTodayProps) => {
         );
 
     return <>
-    
         <p>Records added today:<br /> {formattedRecords}</p>
     </>
 }
