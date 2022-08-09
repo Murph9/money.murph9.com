@@ -34,19 +34,19 @@ const MainForm = (props: MainFormProps) => {
         }
 
         setShowToast("Record saved. Yay");
-        addEditEntry(null);
+        addEditEntry(undefined);
         props.editRow(obj);
     }
     const handleEditExit = () => {
         setShowToast("Record not saved");
         setEdit(false);
-        addEditEntry(null);
+        addEditEntry(undefined);
     };
 
-    const [showToast, setShowToast] = React.useState("");
+    const [showToast, setShowToast] = React.useState<string>("");
     const [list, setList] = React.useState(false);
 
-    const [editEntry, addEditEntry] = React.useState(null);
+    const [editEntry, addEditEntry] = React.useState<JournalEntry | undefined>();
     const handleEditEntry = (row: JournalEntry) => {
         if (!row)
             alert('journal entry not set during edit');
@@ -57,10 +57,10 @@ const MainForm = (props: MainFormProps) => {
     const handleDelete = (row: JournalEntry) => {
         props.deleteRow(row);
         setEdit(false);
-        addEditEntry(null);
+        addEditEntry(undefined);
     }
 
-    const [report, setReport] = React.useState<TypeAndDate>(null);
+    const [report, setReport] = React.useState<TypeAndDate | undefined>();
 
     const viewReportFor = (type: DayType, date: Date) => {
         const td = new TypeAndDate();
@@ -90,7 +90,7 @@ const MainForm = (props: MainFormProps) => {
         </div>
 
         <BarGraphView calc={props.calc} viewReport={viewReportFor}/>
-        {report && <Report calc={props.calc} date={report.date} type={report.type} closeCallback={() => setReport(null)} />}
+        {report && <Report calc={props.calc} date={report.date} type={report.type} closeCallback={() => setReport(undefined)} />}
 
         
         <FullRecordList data={props.data} show={list} edit={handleEditEntry} exit={() => setList(false)}/>
@@ -98,7 +98,7 @@ const MainForm = (props: MainFormProps) => {
         <RecordsToday calc={props.calc} />
 
         <ToastContainer className="p-3" position={'top-center'}>
-            <Toast show={!!showToast} onClose={() => setShowToast(null)} delay={2000} autohide bg='snfo'>
+            <Toast show={!!showToast} onClose={() => setShowToast("")} delay={2000} autohide bg='snfo'>
                 <Toast.Header>
                     <strong className="me-auto">{showToast}</strong>
                     <small>(just now)</small>

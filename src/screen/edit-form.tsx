@@ -45,7 +45,7 @@ const EditForm = (props: EditFormProps) => {
     const repeats = React.createRef<HTMLInputElement>();
     const lastDay = React.createRef<HTMLInputElement>();
     
-    const [category, setCategorySelections] = React.useState([]);
+    const [category, setCategorySelections] = React.useState<Array<{label: string}>>([]);
     const [categorySearch, setCategorySearch] = React.useState(getValueOf('category', null));
     const categoryOnChange = (e: Array<{label:string}>) => {
         setCategorySelections(e);
