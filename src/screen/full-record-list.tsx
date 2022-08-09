@@ -48,7 +48,7 @@ const FullRecordList = (props: RecordListProps) => {
     });
 
     const pages = data.length/pageSize;
-    const paginationItems = [];
+    const paginationItems: Array<JSX.Element> = [];
     for (let i = 0; i < pages && i < 5; i++)
         paginationItems.push(<Pagination.Item key={i} active={i === pageNum} onClick={() => setPageNum(i)}>
             {i+1}
@@ -56,7 +56,7 @@ const FullRecordList = (props: RecordListProps) => {
     if (pages > 5)
         paginationItems.push(<Pagination.Ellipsis />);
 
-    const items = [];
+    const items: Array<JSX.Element> = [];
     for (let i = pageSize*pageNum; i < data.length && i < pageSize*(pageNum+1); i++) {
         items.push(<Entry row={data[i]} key={i+"page"} edit={props.edit}/>);
     }
