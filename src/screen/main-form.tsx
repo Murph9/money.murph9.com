@@ -11,10 +11,12 @@ import FullRecordList from "./full-record-list";
 import BarGraphView from './bar-graph-view';
 import { DayType } from "../utils/day-type";
 import RecordsToday from "../components/records-today";
+import BasicModal from "../components/basic-modal";
 
 class MainFormProps {
     data: Array<JournalEntry>;
     calc: Calc;
+    saving: boolean;
     editRow: (row: JournalEntry) => void;
     deleteRow: (row: JournalEntry) => void;
 }
@@ -33,6 +35,7 @@ const MainForm = (props: MainFormProps) => {
             throw new Error("Returned object was not the right type " + obj);
         }
 
+        setList(false); // remove full list on save
         setShowToast("Record saved. Yay");
         addEditEntry(undefined);
         props.editRow(obj);
@@ -48,8 +51,11 @@ const MainForm = (props: MainFormProps) => {
 
     const [editEntry, addEditEntry] = React.useState<JournalEntry | undefined>();
     const handleEditEntry = (row: JournalEntry) => {
-        if (!row)
+        if (!row) {
             alert('journal entry not set during edit');
+            return;
+        }
+        
         addEditEntry(row);
         setEdit(true);
     }
@@ -94,6 +100,8 @@ const MainForm = (props: MainFormProps) => {
 
         
         <FullRecordList data={props.data} show={list} edit={handleEditEntry} exit={() => setList(false)}/>
+
+        {props.saving && <BasicModal message="Saving..."/>}
 
         <RecordsToday calc={props.calc} />
 

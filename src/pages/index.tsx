@@ -18,6 +18,7 @@ interface IIndexPageState {
   calc: Calc;
   database: DataService;
   inWebView: boolean;
+  saving: boolean;
 }
 
 export default class IndexPage extends React.Component<any, IIndexPageState> {
@@ -30,6 +31,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
       loggedOutExplicitly: false,
       calc: null,
       database: null,
+      saving: false,
       inWebView: !!params.get('webview')
     };
 
@@ -40,14 +42,16 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
   }
 
   editRow(row: JournalEntry): void {
+    this.setState({saving: true });
     this.state.database.save(row, () => {
-      this.setState({calc: this.state.database.getCalc()});
+      this.setState({saving: false, calc: this.state.database.getCalc()});
     }, (message: string) => alert(message));
   };
 
   deleteRow(row: JournalEntry): void {
+    this.setState({saving: true });
     this.state.database.delete(row, () => {
-      this.setState({calc: this.state.database.getCalc()});
+      this.setState({saving: false, calc: this.state.database.getCalc()});
     }, (message: string) => alert(message));
   }
 
@@ -60,7 +64,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
   }
 
   logout() {
-    this.setState({ database: null, calc: null, loggedIn: false, loggedOutExplicitly: true});
+    this.setState({ database: null, calc: null, loggedIn: false, loggedOutExplicitly: true, saving: false});
   }
    
   render() {
@@ -75,7 +79,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     return (
     <>
       <Button variant="info" style={{float: 'right'}} onClick={this.logout}>Logout</Button>
-      <MainForm data={this.state.database.getRaw()} calc={this.state.calc} editRow={this.editRow} deleteRow={this.deleteRow} />
+      <MainForm data={this.state.database.getRaw()} calc={this.state.calc} editRow={this.editRow} deleteRow={this.deleteRow} saving={this.state.saving} />
     </>
     );
   }
