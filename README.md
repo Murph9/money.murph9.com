@@ -19,6 +19,7 @@ Deployed to an AWS S3 bucket, with user auth to another S3 bucket file for the d
 project root> npm install
 project root> gatsby develop
 
+project root> rm public -R
 project root> gatsby build
 project root> aws s3 sync public/. s3://money.murph9.com --delete
 
