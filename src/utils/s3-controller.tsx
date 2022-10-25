@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import {S3, GetObjectCommand, PutObjectCommand} from '@aws-sdk/client-s3';
 
 export class AwsS3Config {
     apiKey: string;
@@ -9,68 +9,51 @@ export class AwsS3Config {
 
 export default class AwsS3Service {
     config: AwsS3Config;
-    s3: AWS.S3;
+    s3: S3;
     folders: any;
 
     constructor(config: AwsS3Config) {
         this.config = config;
 
-        AWS.config.credentials = new AWS.Credentials(this.config.apiKey, this.config.apiSecret);
-        AWS.config.update({ region: this.config.bucketSite });
-        
-        this.s3 = new AWS.S3({
-            apiVersion: '2006-03-01',
-            params: { Bucket: this.config.bucketName}
+        this.s3 = new S3({
+            credentials: {accessKeyId: this.config.apiKey, secretAccessKey: this.config.apiSecret},
+            region: this.config.bucketSite
         });
     }
 
-    getFile(file: string, success: (obj: any) => void, failure: (err: string) => void) {
+    async getFile(file: string, success: (obj: any) => void, failure: (err: string) => void) {
         console.log("getting file: " + file);
-        const that = this;
-        var req = this.s3.getObject({ Bucket: this.config.bucketName, Key: file });
 
         const now = new Date();
-        now.setDate(now.getDate() - 5);
-        req.on('build', function() {
-            req.httpRequest.headers['If-Modified-Since'] = now.toISOString();
-        });
+        now.setDate(now.getDate() - 5); // 5 days
 
-        req.send(function(err, data) {
-            if (err) {
-                console.log("Failed to get file", err);
-                if (err.code === "NoSuchKey") {
-                    that.createNewFile(file, success, failure);
-                } else {
-                    failure(err.message);
-                }
-            } else {
-                success({fileName: file, obj: JSON.parse(data.Body.toString('utf-8'))});
+        var command = new GetObjectCommand({Bucket: this.config.bucketName, Key: file, IfModifiedSince: now});
+        try {
+            const res = await this.s3.send(command);
+            if (!res.Body) {
+                throw new Error("S3 result empty");
             }
-        });
-    }
-
-    createNewFile(file: string, success: (err: any) => void, failure: (err: string) => void) {
-        console.log("Creating a new file: " + file);
-        const initFileContents = '[]'
-        this.s3.putObject({ Bucket: this.config.bucketName, Key: file, Body: initFileContents, ContentType: "application/json" }, function(err) {
-            if (err) {
-                console.log("Failed to create", err);
+            const a = await res.Body.transformToString();
+            success({fileName: file, obj: JSON.parse(a)});
+        } catch (err) {
+            console.log("Failed to get file", err);
+            if (err.name === "NoSuchKey") {
+                success("[]");
+            } else {
                 failure(err.message);
-            } else {
-                success({fileName: file, data: initFileContents });
             }
-        })
+        }
     }
 
-    saveFile(file: string, content: object, success: (err: object) => void, failure: (err: string) => void) {
+    async saveFile(file: string, content: object, success: (err: object) => void, failure: (err: string) => void) {
         console.log("saving file: " + file);
-        this.s3.putObject({ Bucket: this.config.bucketName, Key: file, Body: JSON.stringify(content), ContentType: "application/json" }, function(err, data) {
-            if (err) {
-                console.log("Failed to save", err);
-                failure(err.message);
-            } else {
-                success(data);
-            }
-        });
+        var command = new PutObjectCommand({Bucket: this.config.bucketName, Key: file, Body: JSON.stringify(content), ContentType: "application/json"});
+
+        try {
+            await this.s3.send(command);
+            success(content);
+        } catch (err) {
+            failure(err.message);
+        }
     }
 }

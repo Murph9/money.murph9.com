@@ -16,7 +16,7 @@
     "clean": "gatsby clean"
   },
   "dependencies": {
-    "aws-sdk": "^2.1240.0",
+    "@aws-sdk/client-s3": "^3.196.0",
     "bootstrap": "^5.2.2",
     "gatsby": "^4.24.5",
     "gatsby-plugin-manifest": "^4.24.0",
