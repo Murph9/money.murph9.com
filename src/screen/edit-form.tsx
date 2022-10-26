@@ -46,7 +46,7 @@ const EditForm = (props: EditFormProps) => {
     const lastDay = React.createRef<HTMLInputElement>();
     
     const [category, setCategorySelections] = React.useState<Array<{label: string}>>([]);
-    const [categorySearch, setCategorySearch] = React.useState(getValueOf('category', null));
+    const [categorySearch, setCategorySearch] = React.useState<string>(getValueOf('category', null));
     const categoryOnChange = (e: Array<{label:string}>) => {
         setCategorySelections(e);
         if (e && e.length > 0) {
@@ -80,10 +80,11 @@ const EditForm = (props: EditFormProps) => {
             return;
         }
 
-        let categoryNew = category.length < 1 ? categorySearch : category[0];
-        if (categoryNew && categoryNew.hasOwnProperty('label'))
-            categoryNew = categoryNew.label;
-        if (!categoryNew) {
+        let categoryNew : string | null = null;
+        let categoryMaybe = category.length < 1 ? { label: categorySearch } : category[0];
+        if (categoryMaybe && categoryMaybe.hasOwnProperty('label'))
+            categoryNew = categoryMaybe.label;
+        else {
             setAlert("Please set a category");
             return;
         }
@@ -98,7 +99,7 @@ const EditForm = (props: EditFormProps) => {
         entry.repeats = repeats.current.checked;
         if (lastDay.current)
             entry.lastDay = lastDay.current.valueAsDate;
-        entry.category = categoryNew;
+        entry.category = categoryNew.toLowerCase(); // always lowercase please
         if (note.current)
             entry.note = note.current.value;
 
