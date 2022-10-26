@@ -4,14 +4,14 @@ import DayTypeLib, { DayType } from "./day-type";
 export default class JournalEntry {
     id: number = -1;
     isIncome: boolean = false;
-    from: Date = null;
+    from: Date = new Date();
     amount: number = 0;
     lengthCount: number = 0;
     lengthType = DayType.None;
     repeats: boolean = false;
-    lastDay: Date = null;
-    category: string = null;
-    note: string = null;
+    lastDay: Date | null = null;
+    category: string | undefined;
+    note: string | undefined;
 
     validate() {
         if (this.amount <= 0)

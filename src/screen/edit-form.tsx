@@ -53,8 +53,10 @@ const EditForm = (props: EditFormProps) => {
             e[0].label = e[0].label.toLowerCase().trim();
             if (!props.entry) {
                 var defaults = props.calc.getCategoryDefault(e[0].label);
-                periodType.current.value = defaults.type.toString();
-                periodCount.current.value = defaults.count.toString();
+                if (periodType.current)
+                    periodType.current.value = defaults.type.toString();
+                if (periodCount.current)
+                    periodCount.current.value = defaults.count.toString();
                 
                 //hide android keyboard
                 if (document.activeElement instanceof HTMLElement) {
@@ -71,6 +73,13 @@ const EditForm = (props: EditFormProps) => {
     const save = (event: any) => {
         event.preventDefault();
 
+        if (!(isIncome.current) || !(from.current) || !(periodCount.current) 
+                || !(amount.current) || !(repeats.current)
+                || !(periodType.current)) {
+            setAlert("form invalid");
+            return;
+        }
+
         let categoryNew = category.length < 1 ? categorySearch : category[0];
         if (categoryNew && categoryNew.hasOwnProperty('label'))
             categoryNew = categoryNew.label;
@@ -82,14 +91,16 @@ const EditForm = (props: EditFormProps) => {
         const entry = new JournalEntry();
         entry.id = props.entry ? props.entry.id : -1;
         entry.isIncome = isIncome.current.checked;
-        entry.from = from.current.valueAsDate;
+        entry.from = from.current.valueAsDate || new Date();
         entry.amount = amount.current.valueAsNumber;
         entry.lengthCount = periodCount.current.valueAsNumber;
         entry.lengthType = DayTypeLib.parseDayType(periodType.current.value);
         entry.repeats = repeats.current.checked;
-        entry.lastDay = lastDay.current ? lastDay.current.valueAsDate : null;
+        if (lastDay.current)
+            entry.lastDay = lastDay.current.valueAsDate;
         entry.category = categoryNew;
-        entry.note = note.current.value;
+        if (note.current)
+            entry.note = note.current.value;
 
         const message = entry.validate();
         if (message) {
