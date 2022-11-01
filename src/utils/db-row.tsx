@@ -9,7 +9,7 @@ export default class JournalEntry {
     lengthCount: number = 0;
     lengthType = DayType.None;
     repeats: boolean = false;
-    lastDay: Date | null = null;
+    lastDay: Date | undefined;
     category: string | undefined;
     note: string | undefined;
 
@@ -26,7 +26,7 @@ export default class JournalEntry {
             return "Length type must not be None";
         if (!this.from)
             return "The start date must be set";
-        if (this.lastDay != null && this.lastDay <= this.from)
+        if (this.lastDay != undefined && this.lastDay <= this.from)
             return "LastDay date earlier than the start date (From).";
 
         return null;
@@ -51,6 +51,6 @@ export default class JournalEntry {
         }
 
         //else its forever or if its set
-        return this.lastDay == null ? new Date(9999, 12, 1) : this.lastDay;
+        return this.lastDay == undefined ? new Date(9999, 12, 1) : this.lastDay;
     }
 }

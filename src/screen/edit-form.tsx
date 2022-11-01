@@ -19,7 +19,7 @@ class EditFormProps {
     save: (row: JournalEntry) => void;
     exit: () => void;
     delete: (row: JournalEntry) => void;
-    entry: JournalEntry;
+    entry: JournalEntry | undefined;
     categoryList: Array<string>;
     calc: Calc;
 }
@@ -98,7 +98,7 @@ const EditForm = (props: EditFormProps) => {
         entry.lengthType = DayTypeLib.parseDayType(periodType.current.value);
         entry.repeats = repeats.current.checked;
         if (lastDay.current)
-            entry.lastDay = lastDay.current.valueAsDate;
+            entry.lastDay = lastDay.current.valueAsDate ?? undefined;
         entry.category = categoryNew.toLowerCase(); // always lowercase please
         if (note.current)
             entry.note = note.current.value;
@@ -199,7 +199,7 @@ const EditForm = (props: EditFormProps) => {
             </Form>
         </Modal.Body>
         <Modal.Footer>
-            {props.entry && deleteConfirm && <Button variant="danger" onClick={() => props.delete(props.entry)}>REALLY DELETE?</Button>}
+            {props.entry && deleteConfirm && <Button variant="danger" onClick={() => props.entry ? props.delete(props.entry) : null}>REALLY DELETE?</Button>}
             <Button variant="secondary" onClick={props.exit}>Close</Button>
             <Button variant="primary" onClick={save}>Save Changes</Button>
             {props.entry && <Button variant="danger" disabled={deleteConfirm} onClick={() => setDeleteConfirm(true)}>Delete</Button>}

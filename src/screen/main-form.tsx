@@ -36,7 +36,6 @@ const MainForm = (props: MainFormProps) => {
         }
 
         setList(false); // remove full list on save
-        setShowToast("Record saved. Yay");
         addEditEntry(undefined);
         props.editRow(obj);
     }
@@ -49,7 +48,7 @@ const MainForm = (props: MainFormProps) => {
     const [showToast, setShowToast] = React.useState<string>("");
     const [list, setList] = React.useState(false);
 
-    const [editEntry, addEditEntry] = React.useState<JournalEntry | undefined>();
+    const [editEntry, addEditEntry] = React.useState<JournalEntry>();
     const handleEditEntry = (row: JournalEntry) => {
         if (!row) {
             alert('journal entry not set during edit');
@@ -66,7 +65,7 @@ const MainForm = (props: MainFormProps) => {
         addEditEntry(undefined);
     }
 
-    const [report, setReport] = React.useState<TypeAndDate | undefined>();
+    const [report, setReport] = React.useState<TypeAndDate>();
 
     const viewReportFor = (type: DayType, date: Date) => {
         const td = new TypeAndDate();
