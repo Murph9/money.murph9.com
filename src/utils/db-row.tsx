@@ -10,7 +10,7 @@ export default class JournalEntry {
     lengthType = DayType.None;
     repeats: boolean = false;
     lastDay: Date | undefined;
-    category: string | undefined;
+    category: string;
     note: string | undefined;
 
     validate() {

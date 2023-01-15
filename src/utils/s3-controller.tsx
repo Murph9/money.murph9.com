@@ -23,7 +23,7 @@ export default class AwsS3Service {
 
     async getFile(file: string, success: (obj: any) => void, failure: (err: string) => void) {
         console.log("getting file: " + file);
-        var command = new GetObjectCommand({Bucket: this.config.bucketName, Key: file});
+        var command = new GetObjectCommand({Bucket: this.config.bucketName, Key: file, ResponseExpires: new Date()});
         try {
             const res = await this.s3.send(command);
             if (!res.Body) {

@@ -98,7 +98,7 @@ export default class Calc {
                 result = this.rowsForYear(startDate);
                 break;
             default:
-                return null;
+                return new JournalEntry[0];
         }
 
         this.rowCache.put(key, result);
