@@ -2,18 +2,19 @@ locals {
     s3_origin_name = "S3-${local.full_url}"
 }
 
+resource "aws_cloudfront_origin_access_control" "default" {
+    name                              = "${local.full_url}-Access-Control"
+    description                       = "Access control for ${local.full_url} assets"
+    origin_access_control_origin_type = "s3"
+    signing_behavior                  = "always"
+    signing_protocol                  = "sigv4"
+}
+
 resource "aws_cloudfront_distribution" "cdn" {
     origin {
-        origin_id = local.s3_origin_name
         domain_name = aws_s3_bucket.web_bucket.bucket_regional_domain_name
-        custom_origin_config {
-            http_port = 80
-            https_port = 443
-            origin_keepalive_timeout = 5
-            origin_protocol_policy = "http-only"
-            origin_read_timeout = 10
-            origin_ssl_protocols = [ "TLSv1" ] # required but ignored by the above "http-only"
-        }
+        origin_id = local.s3_origin_name
+        origin_access_control_id = aws_cloudfront_origin_access_control.default.id
     }
 
     enabled             = true
