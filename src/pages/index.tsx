@@ -9,8 +9,7 @@ import DataService from "../utils/db-repo";
 import JournalEntry from "../utils/db-row";
 import Calc from "../utils/calc";
 
-export const pageQuery = graphql`query a { site { siteMetadata { awsFileName } } }`
-
+export const pageQuery = graphql`query a { site { siteMetadata { title, bucketRegion } } }`
 
 interface IIndexPageState {
   loggedIn: boolean;
@@ -29,8 +28,8 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     this.state = {
       loggedIn: false,
       loggedOutExplicitly: false,
-      calc: null,
-      database: null,
+      calc: undefined,
+      database: undefined,
       saving: false,
       inWebView: !!params.get('webview')
     };
@@ -55,9 +54,9 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     }, (message: string) => alert(message));
   }
 
-  login(creds: AwsS3Config) {
+  login(creds: AwsS3Config, fileName: string) {
     const s3Service = new AwsS3Service(creds);
-    const database = new DataService(s3Service, this.props.data.site.siteMetadata.awsFileName);
+    const database = new DataService(s3Service, fileName);
     database.load(() => {
       this.setState({calc: database.getCalc(), database: database, loggedIn: true });
     }, (err) => { alert(err); });
@@ -73,7 +72,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     }
 
     if (!this.state.loggedIn) {
-      return (<LoginForm callback={this.login} inWebView={this.state.inWebView} loggedOut={this.state.loggedOutExplicitly} />);
+      return (<LoginForm callback={this.login} inWebView={this.state.inWebView} loggedOut={this.state.loggedOutExplicitly} bucketRegion={this.props.data.site.siteMetadata.bucketRegion} />);
     }
 
     return (

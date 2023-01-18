@@ -1,23 +1,23 @@
-import {S3, GetObjectCommand, PutObjectCommand} from '@aws-sdk/client-s3';
+import {S3Client, GetObjectCommand, PutObjectCommand} from '@aws-sdk/client-s3';
 
 export class AwsS3Config {
     apiKey: string;
     apiSecret: string;
-    bucketSite: string;
+    bucketRegion: string;
     bucketName: string;
 }
 
 export default class AwsS3Service {
     config: AwsS3Config;
-    s3: S3;
+    s3: S3Client;
     folders: any;
 
     constructor(config: AwsS3Config) {
         this.config = config;
 
-        this.s3 = new S3({
+        this.s3 = new S3Client({
             credentials: {accessKeyId: this.config.apiKey, secretAccessKey: this.config.apiSecret},
-            region: this.config.bucketSite
+            region: this.config.bucketRegion
         });
     }
 
@@ -34,7 +34,8 @@ export default class AwsS3Service {
         } catch (err) {
             console.log("Failed to get file", err);
             if (err.name === "NoSuchKey") {
-                success("[]");
+                // if the file doesn't exist yet, try and create it
+                this.saveFile(file, [], () => success("[]"), (message) => failure(message));
             } else {
                 failure(err.message);
             }
