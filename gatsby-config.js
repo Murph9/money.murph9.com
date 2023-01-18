@@ -4,7 +4,7 @@ module.exports = {
     title: "Money But Daily",
     description: `my money, go away`,
     author: `@murph9`,
-    awsFileName: `moneyButDaily.json`
+    awsFileName: `money.murph9.com/moneyButDaily.json`
   },
   plugins: [
     {

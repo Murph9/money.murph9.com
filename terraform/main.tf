@@ -23,6 +23,15 @@ module "site" {
     https_cert_arn = "arn:aws:acm:us-east-1:331595486750:certificate/5caf0062-64fb-43be-90d2-4e73ed3f5ba9"
 }
 
+module "data_store" {
+    source = "./data_store"
+    
+    website_name = "money.murph9.com"
+    data_bucket_arn = "arn:aws:s3:::murph9-data"
+    iam_user_name = "moneyButDailyUser"
+    file_name = "moneyButDaily.json"
+}
+
 output "website_link" {
     value = "https://${module.site.route53_domain}"
 }
