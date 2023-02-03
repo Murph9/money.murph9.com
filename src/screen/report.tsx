@@ -11,7 +11,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import DayTypeLib, { DayType } from "../utils/day-type";
 import Calc from "../utils/calc";
 
-import ReportDiff from "../components/report-table";
+import ReportTable from "../components/report-table";
 import ReportGraph from "../components/report-graph";
 
 class ReportProps {
@@ -78,8 +78,8 @@ const Report = (props: ReportProps) => {
                 <ReportGraph data={expenseList} maxCount={maxCount} showDiff={calcDiff} />
             </Tab>
             <Tab eventKey="table" title="Table View">
-                {showIncome && <ReportDiff data={incomeList} maxCount={incomeList.length} showDiff={calcDiff} />}
-                <ReportDiff data={expenseList} maxCount={maxCount} showDiff={calcDiff} />
+                {showIncome && <ReportTable data={incomeList} maxCount={incomeList.length} showDiff={calcDiff} />}
+                <ReportTable data={expenseList} maxCount={maxCount} showDiff={calcDiff} />
             </Tab>
         </Tabs>
     </>
@@ -90,34 +90,29 @@ export default Report;
 
 function generateReportRows(cur: Map<string, number>, prev: Map<string, number>, calcDiff: boolean): Array<ReportRow> {
     if (!calcDiff) {
-        return [...cur.keys()].map(x => {
-            let value = -cur.get(x);
-            return new ReportRow(x, value);
-        });
+        return [...cur.entries()].map((x) => new ReportRow(x[0], -x[1])); // convert to negative here
     }
 
     const names = [...new Set([...prev.keys(), ...cur.keys()])];
     
     const entryList: Array<ReportRow> = [];
     for (const name of names) {
+        let prevValue = -(prev.get(name) ?? 0); // 0 only to prevent ts error
+        let curValue = -(cur.get(name) ?? 0); // 0 only to prevent ts error
         if (!prev.has(name)) {
             // only added
-            let value = -cur.get(name);
             let record = new ReportRow(name, 0);
-            record.added = value;
+            record.added = curValue;
             entryList.push(record);
             
         } else if (!cur.has(name)) {
             // only removed
-            let value = -prev.get(name);
             let record = new ReportRow(name, 0);
-            record.removed = value;
+            record.removed = prevValue;
             entryList.push(record);
 
         } else {
             // both
-            let prevValue = -prev.get(name);
-            let curValue = -cur.get(name);
             const dValue = Math.abs(curValue - prevValue);
             if (prevValue < curValue) {
                 let record = new ReportRow(name, prevValue);
