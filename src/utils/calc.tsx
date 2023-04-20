@@ -36,14 +36,14 @@ export default class Calc {
     constructor(data: Array<JournalEntry>) {
         this.dayRanges = data.map(x => new Range(x));
         
+        // distinct but also put the categories in reverse order so most recent is first
+        this.categories = [... new Set(data.map(x => x.category).reverse())];
+
         for (const row of data) {
-            if (!this.categories.includes(row.category)) {
-                this.categories.push(row.category);
-            }
-            
             // just use the last entry of the category
             this.categoryDefaultCache.set(row.category, {count: row.lengthCount, type: row.lengthType});
         }
+
         console.log("Ranges length:", this.dayRanges.length);
         console.log("Categories: ", this.categories.length);
     }
