@@ -53,8 +53,10 @@ export default class Calc {
     }
 
     getCategoryDefault(category: string): {count: number, type: DayType} {
-        if (this.categoryDefaultCache.has(category)) {
-            return this.categoryDefaultCache.get(category);
+        if (category && this.categoryDefaultCache.has(category)) {
+            const result = this.categoryDefaultCache.get(category);
+            if (result)
+                return result;
         }
         return {count: 1, type: DayType.Day};
     }
@@ -133,7 +135,7 @@ export default class Calc {
     rowsForMonth(startDate: Date): Array<JournalEntry> {
         var date = DayTypeLib.setToStart(new Date(startDate), DayType.Month);
         const month = date.getMonth();
-        const array = [];
+        const array: JournalEntry[] = [];
         while (date.getMonth() == month) {
             array.push(...this.rowsFor(DayType.Day, date));
             DateLib.addDays(date, 1)
@@ -144,7 +146,7 @@ export default class Calc {
     rowsForYear(startDate: Date): Array<JournalEntry> {
         var date = DayTypeLib.setToStart(new Date(startDate), DayType.Year);
         const year = date.getFullYear();
-        const array = [];
+        const array: JournalEntry[] = [];
         while (date.getFullYear() == year) {
             array.push(...this.rowsFor(DayType.Month, date));
             DateLib.addMonths(date, 1)
@@ -160,7 +162,7 @@ export default class Calc {
             if (!map.has(row.category))
                 map.set(row.category, row.calcPerDay());
             else
-                map.set(row.category, map.get(row.category) + row.calcPerDay());
+                map.set(row.category, (map.get(row.category) || 0) + row.calcPerDay());
         }
         return map;
     }

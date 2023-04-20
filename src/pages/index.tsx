@@ -14,8 +14,8 @@ export const pageQuery = graphql`query a { site { siteMetadata { title, bucketRe
 interface IIndexPageState {
   loggedIn: boolean;
   loggedOutExplicitly: boolean;
-  calc: Calc;
-  database: DataService;
+  calc: Calc | undefined;
+  database: DataService | undefined;
   inWebView: boolean;
   saving: boolean;
 }
@@ -42,15 +42,15 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
 
   editRow(row: JournalEntry): void {
     this.setState({saving: true });
-    this.state.database.save(row, () => {
-      this.setState({saving: false, calc: this.state.database.getCalc()});
+    this.state.database?.save(row, () => {
+      this.setState({saving: false, calc: this.state.database?.getCalc()});
     }, (message: string) => alert(message));
   };
 
   deleteRow(row: JournalEntry): void {
     this.setState({saving: true });
-    this.state.database.delete(row, () => {
-      this.setState({saving: false, calc: this.state.database.getCalc()});
+    this.state.database?.delete(row, () => {
+      this.setState({saving: false, calc: this.state.database?.getCalc()});
     }, (message: string) => alert(message));
   }
 
@@ -63,7 +63,13 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
   }
 
   logout() {
-    this.setState({ database: null, calc: null, loggedIn: false, loggedOutExplicitly: true, saving: false});
+    this.setState({
+      database: undefined,
+      calc: undefined,
+      loggedIn: false,
+      loggedOutExplicitly: true,
+      saving: false
+    });
   }
    
   render() {
@@ -78,7 +84,7 @@ export default class IndexPage extends React.Component<any, IIndexPageState> {
     return (
     <>
       <Button variant="info" style={{float: 'right'}} onClick={this.logout}>Logout</Button>
-      <MainForm data={this.state.database.getRaw()} calc={this.state.calc} editRow={this.editRow} deleteRow={this.deleteRow} saving={this.state.saving} />
+      <MainForm data={this.state.database?.getRaw() || new JournalEntry[0]} calc={this.state.calc || new Calc(new JournalEntry[0])} editRow={this.editRow} deleteRow={this.deleteRow} saving={this.state.saving} />
     </>
     );
   }

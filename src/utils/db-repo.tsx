@@ -30,7 +30,7 @@ export default class DataService {
                 entry.from = new Date(Date.parse(x['from']));
                 entry.repeats = x['repeats'];
                 entry.isIncome = x['isIncome'];
-                entry.lastDay = x['lastDay'] ? new Date(Date.parse(x['lastDay'])) : null
+                entry.lastDay = x['lastDay'] ? new Date(Date.parse(x['lastDay'])) : undefined
                 entry.lengthCount = x['lengthCount'];
                 entry.lengthType = DayTypeLib.parseDayType(x['lengthType']);
                 entry.note = x['note'];
