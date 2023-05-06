@@ -43,9 +43,11 @@ const FullRecordList = (props: RecordListProps) => {
     const [filter, setFilter] = React.useState("");
 
     const searchExp =  new RegExp(filter, "i");
-    const data = props.data.filter(x => searchExp.test(x.category)).sort((x: JournalEntry, y: JournalEntry) => {
-        return +y.from - +x.from;
-    });
+    const data = props.data
+        .filter(x => searchExp.test(x.category) || (x.note && searchExp.test(x.note)))
+        .sort((x: JournalEntry, y: JournalEntry) => {
+            return +y.from - +x.from;
+        });
 
     const pages = data.length/pageSize;
     const paginationItems: Array<JSX.Element> = [];
