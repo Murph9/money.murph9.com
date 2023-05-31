@@ -34,14 +34,14 @@ const ReportGraph = (props: ReportGraphProps) => {
         <BarChart data={props.data.slice(0, graphCount)} layout="vertical" id="b">
             <Legend verticalAlign="top" height={36}/>
             <XAxis dataKey='existing' type="number" domain={[0, graphMax]}/>
-            <YAxis dataKey='name' scale="band" type="category" width={150} interval={0} />
+            <YAxis dataKey='name' type="category" width={150} interval={0} />
             <Bar dataKey="existing" isAnimationActive={false} fill="#8884d8" barSize={50} stackId="main" />
             {props.showDiff &&
             <>
                 <Bar dataKey="added" isAnimationActive={false} fill="#84d888" barSize={50} stackId="main" />
                 <Bar dataKey="removed" isAnimationActive={false} fill="#844444" barSize={50} stackId="main" />
             </>}
-            <Tooltip formatter={(value: number, name: string) => [value.toFixed(2), name]}/>
+            <Tooltip formatter={(value: number, name: string) => [Math.round((value + Number.EPSILON) * 100) / 100, name]}/>
         </BarChart>
     </ResponsiveContainer>;
 }
