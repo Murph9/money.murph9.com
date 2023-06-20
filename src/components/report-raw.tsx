@@ -22,6 +22,7 @@ const ReportRaw = (props: ReportRawProps) => {
             </thead>
             <tbody>
                 {props.data
+                    .filter(distinct)
                     .sort((x, y) => x.calcPerDay() - y.calcPerDay())
                     .map(x =>
                         <tr>
@@ -41,6 +42,10 @@ function getOptionalString(str: string | undefined) {
     if (str)
         return <td>{str}</td>;
     return <td></td>;
+}
+
+function distinct(value: JournalEntry, index: number, array: JournalEntry[]) {
+    return array.indexOf(value) === index;
 }
 
 export default ReportRaw;
