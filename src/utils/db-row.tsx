@@ -13,7 +13,7 @@ export default class JournalEntry {
     category: string;
     note: string | undefined;
 
-    validate() {
+    validate(): string | undefined {
         if (this.amount <= 0)
             return "Amount is not set";
         if (this.lengthCount == 0 && this.lengthType != DayType.Day)
@@ -29,7 +29,7 @@ export default class JournalEntry {
         if (this.lastDay != undefined && this.lastDay <= this.from)
             return "LastDay date earlier than the start date (From).";
 
-        return null;
+        return undefined;
     }
 
     calcPerDay() {

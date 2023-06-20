@@ -24,7 +24,7 @@ const RecordsToday = (props: RecordsTodayProps) => {
         );
 
     return <>
-        <p>Records added today:<br /> {formattedRecords}</p>
+        <p>Records that start today:<br /> {formattedRecords}</p>
     </>
 }
 

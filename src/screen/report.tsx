@@ -13,6 +13,7 @@ import Calc from "../utils/calc";
 
 import ReportTable from "../components/report-table";
 import ReportGraph from "../components/report-graph";
+import ReportRaw from "../components/report-raw";
 
 class ReportProps {
     type: DayType;
@@ -45,7 +46,9 @@ const Report = (props: ReportProps) => {
     const [showAll, setShowAll] = React.useState(false);
     const [showIncome, setShowIncome] = React.useState(false);
 
-    const cur = props.calc.reportFor(props.type, props.date);
+    const curRaw = props.calc.rowsFor(props.type, props.date);
+    const cur = props.calc.reportForRows(curRaw);
+
     const prev = props.calc.reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
     
     const entryList = generateReportRows(cur, prev, calcDiff);
@@ -80,6 +83,9 @@ const Report = (props: ReportProps) => {
             <Tab eventKey="table" title="Table View">
                 {showIncome && <ReportTable data={incomeList} maxCount={incomeList.length} showDiff={calcDiff} />}
                 <ReportTable data={expenseList} maxCount={maxCount} showDiff={calcDiff} />
+            </Tab>
+            <Tab eventKey="raw" title="Raw">
+                <ReportRaw data={curRaw} />
             </Tab>
         </Tabs>
     </>

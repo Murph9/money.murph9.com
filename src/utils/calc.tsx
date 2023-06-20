@@ -156,7 +156,10 @@ export default class Calc {
 
     reportFor(type: DayType, startDate: Date): Map<string, number> {
         const list = this.rowsFor(type, startDate);
+        return this.reportForRows(list);
+    }
 
+    reportForRows(list: Array<JournalEntry>): Map<string, number> {
         const map = new Map<string, number>();
         for (const row of list) {
             if (!map.has(row.category))
