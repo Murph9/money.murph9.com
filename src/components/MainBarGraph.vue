@@ -8,7 +8,6 @@ class ReportEntry {
   name: string;
   amount: number;
   date: Date;
-  extraLabel: string | null = null;
   current: boolean = false;
   future: boolean = false;
 
@@ -38,14 +37,12 @@ const barIndex = computed(() => {
 
 const barData = computed(() => {
   const now = DayTypeLib.setToStart(new Date(), props.periodType);
- 
   return barIndex.value.map((i) => {
     const periodStart = DayTypeLib.offsetDateBy(now, props.periodType, i);
-    const value = Context.getCalc().totalFor(props.periodType, periodStart);
+    const value = Context.value.calc.totalFor(props.periodType, periodStart);
     const obj = new ReportEntry(periodStart.toLocaleDateString(), value, periodStart);
     if (now.getTime() == periodStart.getTime()) {
       obj.current = true;
-      obj.amount > 0 ? obj.extraLabel = '🠗' : obj.extraLabel = '🠕';
     } else if (now.getTime() < periodStart.getTime()) {
       obj.future = true;
     }

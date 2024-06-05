@@ -6,7 +6,7 @@ import { computed } from 'vue';
 
 const formattedRecords = computed(() => {
     const today = DateLib.treatAsUTC(DayTypeLib.setToStart(new Date(), DayType.Day));
-    return Context.getCalc().rowsForDay(today).filter(x => x.from.getTime() === today.getTime());
+    return Context.value.calc.rowsForDay(today).filter(x => x.from.getTime() === today.getTime());
 });
 </script>
 

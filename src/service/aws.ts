@@ -15,9 +15,8 @@ export class AwsS3Config {
 }
 
 export default class AwsS3Service {
-    config: AwsS3Config;
-    s3: S3Client;
-    folders: any;
+    private config: AwsS3Config;
+    private s3: S3Client;
 
     constructor(config: AwsS3Config) {
         this.config = config;

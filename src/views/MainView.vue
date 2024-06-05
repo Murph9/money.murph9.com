@@ -14,7 +14,7 @@ import JournalEntry from '@/service/journalEntry';
 const toast = useToast();
 
 const amountToday = computed(() => {
-  return Context.getCalc().totalFor(DayType.Day, new Date());
+  return Context.value.calc.totalFor(DayType.Day, new Date());
 });
 
 const editing = ref<JournalEntry | boolean>(false);
@@ -34,26 +34,6 @@ function handleEditEntry(row: JournalEntry) {
   }
   
   editing.value = row;
-}
-
-function handleEditClose(obj: JournalEntry) {
-  editing.value = false;
-  if (obj != null && !(obj instanceof JournalEntry)) {
-    throw new Error("Returned object was not the right type " + obj);
-  }
-  toast.info(obj.category + " record saved");
-
-  viewList.value = false; // remove full list on save
-  props.editRow(obj);
-}
-
-function handleEditExit() {
-  editing.value = false;
-  toast.info("Record not saved");
-}
-function handleDelete(row: JournalEntry) {
-  editing.value = false;
-  props.deleteRow(row);
 }
 </script>
 

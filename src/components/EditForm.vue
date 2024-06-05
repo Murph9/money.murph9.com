@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import JournalEntry from "@/service/journalEntry";
 import SimpleModal from "./SimpleModal.vue";
-import { computed, ref, type Ref } from "vue";
+import { computed, ref } from "vue";
 import DayTypeLib, { DayType } from "@/service/dayType";
 import { Context } from "@/service/appContext";
 
@@ -15,11 +15,11 @@ const formAlert = ref("");
 const amount = ref(0);
 const isIncome = ref(false);
 const category = ref("");
-const startDate: Ref<Date | undefined> = ref();
+const startDate = ref(new Date().toISOString().substring(0, 10));
 const periodCount = ref(1);
 const periodType = ref(DayType.Day);
 const repeats = ref(false);
-const lastDay: Ref<Date | undefined> = ref();
+const lastDay = ref("");
 const note = ref("");
 
 
@@ -30,7 +30,7 @@ const perDay = computed(() => {
   return 0;
 });
 
-const categories = computed(() => Context.getCalc().categories);
+const categories = computed(() => Context.value.calc.categories);
 
 function selectItemEventHandler(item: any) {
   category.value = item;
@@ -48,11 +48,14 @@ function handleModalConfirm() {
     return;
   }
 
-  const entry = new JournalEntry(startDate.value, amount.value, periodCount.value, periodType.value, category.value.toLocaleLowerCase());
+  const startDateDate = new Date(Date.parse(startDate.value));
+
+  const entry = new JournalEntry(startDateDate, amount.value, periodCount.value, periodType.value, category.value.toLocaleLowerCase());
   entry.id = props.entry && props.entry instanceof JournalEntry ? props.entry.id : -1;
   entry.isIncome = isIncome.value;
   entry.repeats = repeats.value;
-  entry.lastDay = lastDay.value;
+  if (lastDay.value)
+    entry.lastDay = new Date(Date.parse(lastDay.value));
   
   const message = entry.validate();
   if (message) {
@@ -61,9 +64,8 @@ function handleModalConfirm() {
   }
 
   console.log("Saving:", entry);
-  Context.saveRow(entry, () => {
+  Context.value.saveRow(entry, () => {
     editing.value = false;
-    // TODO this doesn't reload the page, but it does save
   }, (str) => {
     formAlert.value = str;
   });

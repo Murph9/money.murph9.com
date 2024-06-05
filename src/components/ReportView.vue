@@ -26,12 +26,12 @@ const TAB_RAW = "tab_raw";
 const activeTab = ref(TAB_GRAPH);
 
 const rawList = computed(() => {
-  return Context.getCalc().rowsFor(props.type, props.date);
+  return Context.value.calc.rowsFor(props.type, props.date);
 });
 
 const entryList = computed(() => {
-  var cur = Context.getCalc().reportForRows(rawList.value);
-  const prev = Context.getCalc().reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
+  var cur = Context.value.calc.reportForRows(rawList.value);
+  const prev = Context.value.calc.reportFor(props.type, DayTypeLib.offsetDateBy(props.date, props.type, -1));
   return generateReportRows(cur, prev, showDiff.value);
 });
 

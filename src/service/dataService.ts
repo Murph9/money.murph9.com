@@ -1,24 +1,15 @@
 import AwsS3Service from "./aws";
 import JournalEntry from "./journalEntry";
-import Calc from "./calc";
 import DayTypeLib from "./dayType";
 
 export default class DataService {
-    awsService: AwsS3Service;
-    fileName: string;
+    private awsService: AwsS3Service;
+    private fileName: string;
     rawData: Array<JournalEntry> = [];
-    calc: Calc | undefined;
     
     constructor(s3: AwsS3Service, fileName: string) {
         this.awsService = s3;
         this.fileName = fileName;
-    }
-
-    getCalc(): Calc {
-        if (!this.calc) {
-            this.calc = new Calc(this.rawData);
-        }
-        return this.calc;
     }
 
     load(success: () => void, failure: (err: string) => void) {
@@ -44,7 +35,6 @@ export default class DataService {
                 return +x.from - +y.from;
             });
 
-            that.calc = undefined;
             success();
         }, (message: string) => failure(message));
     }
@@ -70,7 +60,6 @@ export default class DataService {
         const that = this;
         this.awsService.saveFile(this.fileName, this.rawData, success, function(response: string) {
             that.rawData = that.rawData.filter(x => x != newData); // revert save, show message
-            that.calc = undefined;
             failure(response);
         });
     }
@@ -87,7 +76,6 @@ export default class DataService {
         const that = this;
         this.awsService.saveFile(this.fileName, this.rawData, success, function(response: string) {
             that.rawData.push(row); // revert save, show message
-            that.calc = undefined;
             failure(response);
         });
     }

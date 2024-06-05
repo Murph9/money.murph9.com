@@ -24,19 +24,19 @@ const apiSecret = ref(getFromLocalStorage("awsApiSecret", ""));
 const errorMessage = ref("");
 
 function login() {
-  Context.loggedOut = false;
+  Context.value.loggedOut = false;
 
   const creds = new AwsS3Config(apiKey.value, apiSecret.value, bucketRegion.value, bucketName.value);
   const s3Service = new AwsS3Service(creds);
   const database = new DataService(s3Service, bucketPath.value);
   database.load(() => {
-    Context.setDb(database);
+    Context.value.setDb(database);
     if (typeof window !== 'undefined') {
       window.localStorage.setItem("bucketRegion", bucketRegion.value);
       window.localStorage.setItem("bucket", bucketName.value);
       window.localStorage.setItem("fileName", bucketPath.value);
       
-      if (Context.autoLogin) {
+      if (Context.value.autoLogin) {
         window.localStorage.setItem("awsApiKey", apiKey.value);
         window.localStorage.setItem("awsApiSecret", apiSecret.value);
       }
@@ -44,9 +44,9 @@ function login() {
   }, (err: string) => { errorMessage.value = err; });
 }
 
-if (Context.autoLogin && bucketRegion.value && bucketName.value && bucketPath.value && apiKey.value && apiSecret.value) {
+if (Context.value.autoLogin && bucketRegion.value && bucketName.value && bucketPath.value && apiKey.value && apiSecret.value) {
   console.log("In webview with all credentials valid, auto logging in");
-  if (!Context.loggedOut) {
+  if (!Context.value.loggedOut) {
     login();
   }
 }

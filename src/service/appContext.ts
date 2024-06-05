@@ -1,33 +1,39 @@
-import { reactive } from 'vue';
+import { ref } from 'vue';
 import DataService from './dataService';
 import type JournalEntry from './journalEntry';
+import Calc from './calc';
 
 export class AppConfig {
     autoLogin: boolean = false;
     loggedOut: boolean = false;
     private db?: DataService;
+    calc: Calc = new Calc([]);
 
     setDb(db: DataService | undefined) {
         this.db = db;
+        if (db)
+            this.calc = new Calc(db.rawData)
     }
     
     successful() {
         return !!this.db;
     }
 
-    getCalc() {
-        if (!this.db) throw Error("Do not get calc if there is no db");
-        return this.db.getCalc();
-    }
-
     saveRow(entry: JournalEntry, success: () => void, failure: (x: string) => void) {
+        const that = this;
         this.db?.save(entry, () => {
             success();
-            // TODO how to refresh state?
+            if (that.db)
+                this.calc = new Calc(that.db.rawData);
         }, failure);
     }
     deleteRow(entry: JournalEntry, success: () => void, failure: (x: string) => void) {
-        this.db?.delete(entry, success, failure);
+        const that = this;
+        this.db?.delete(entry, () => {
+            success();
+            if (that.db)
+                this.calc = new Calc(that.db.rawData);
+        }, failure);
     }
     
     getCount() {
@@ -35,12 +41,12 @@ export class AppConfig {
     }
 
     getLastModified() {
-        return "Unknown";
+        return "Unknown"; // TODO
     }
 
     getLastUserAgent() {
-        return "none";
+        return "none"; // TODO
     }
 }
 
-export const Context = reactive(new AppConfig());
+export const Context = ref(new AppConfig());

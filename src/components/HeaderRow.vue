@@ -6,12 +6,12 @@ import { Context } from '../service/appContext';
 const version = import.meta.env.PACKAGE_VERSION;
 
 function logout() {
-  Context.loggedOut = true;
-  Context.setDb(undefined);
+  Context.value.loggedOut = true;
+  Context.value.setDb(undefined);
 }
 
 const lastSaved = computed(() => {
-  return new Date(Context.getLastModified() ?? new Date());
+  return new Date(Context.value.getLastModified() ?? new Date());
 });
 </script>
 
