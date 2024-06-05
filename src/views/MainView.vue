@@ -45,15 +45,12 @@ function handleEditEntry(row: JournalEntry) {
     </h1>
 
     <EditForm :entry="editing" />
-  
-    <span class="float-end" v-if="!viewList">
-      <button class="btn btn-secondary" @click="viewList=true">View All</button>
-    </span>
+    <FullRecordList :edit="handleEditEntry"></FullRecordList>
+
   </div>
   <MainBarGraphControl @view-report="viewReportFor"></MainBarGraphControl>
   
   <ReportView v-if="viewReport" :date="viewReport.date" :type="viewReport.type" @close-callback="viewReport = null"></ReportView>
-  <FullRecordList v-if="viewList" :edit="handleEditEntry" :exit="viewList = false"></FullRecordList>
   
   <!--{props.saving && <BasicModal message="Saving..."/>}-->
   

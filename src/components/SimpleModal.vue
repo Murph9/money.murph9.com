@@ -1,11 +1,17 @@
 <script setup lang="ts">
 
-const props = defineProps<{
-  open: boolean,
+const props = withDefaults(defineProps<{
+  open: boolean
+  showFooter: boolean
   cancelText: string
   confirmText: string
   headingText: string
-}>();
+}>(), {
+  showFooter: true,
+  headingText: "Heading",
+  cancelText: "Cancel",
+  confirmText: "Confirm"
+});
 const emits = defineEmits<{
   cancelled: [void],
   confirm: [void]
@@ -22,9 +28,9 @@ const emits = defineEmits<{
         <div class="modal-body">
           <slot></slot>
         </div>
-        <div class="modal-footer">
-        <button class="btn btn-secondary" @click="emits('cancelled')">{{ props.cancelText }}</button>
-        <button class="btn btn-primary" @click="emits('confirm')">{{ props.confirmText }}</button>
+        <div class="modal-footer" v-if="props.showFooter">
+          <button class="btn btn-secondary" @click="emits('cancelled')">{{ props.cancelText }}</button>
+          <button class="btn btn-primary" @click="emits('confirm')">{{ props.confirmText }}</button>
         </div>
       </div>
     </div>

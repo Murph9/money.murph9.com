@@ -14,6 +14,9 @@ export class AppConfig {
         if (db)
             this.calc = new Calc(db.rawData)
     }
+    getRawData() {
+        return [...this.db?.getRaw() || []];
+    }
     
     successful() {
         return !!this.db;
