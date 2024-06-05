@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Verdana, sans-serif;
+  font-size: 13px;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1, h2, h3, h4, h5, h6, p, ol, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+pre {
+  margin-bottom: 0px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+/* well it needs this */
+.simple-typeahead div.simple-typeahead-list .simple-typeahead-list-item {
+  background-color: var(--bs-body-bg) !important;
+}

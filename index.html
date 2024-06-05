@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>money.murph9.com</title>
+    <script>
+      function updateTheme() {
+        const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.querySelector("html").setAttribute("data-bs-theme", colorMode);
+      }
+      updateTheme();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

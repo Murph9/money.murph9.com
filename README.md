@@ -1,40 +1,36 @@
-# money.murph9.com
+# moneyButDaily
 
-A Gatsby/React statically generated site
+A Vue static stite
 Deployed to an AWS S3 bucket, with user auth to another S3 bucket file for the data
 
----
+## Recommended IDE Setup
 
-## Environment Setup:
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-* install gatsby and node https://www.gatsbyjs.org/tutorial/part-zero/
-`npm install -g gatsby-cli`
+## Type Support for `.vue` Imports in TS
 
-* install the aws cli https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
 
----
+## Customize configuration
 
-## Useful commands (including running the project and deploying to AWS S3)
-```
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
+
+```sh
 project root> npm install
-project root> gatsby develop
+```
 
-project root> rm public -R
-project root> gatsby build
-project root> aws s3 sync public/. s3://money.murph9.com --delete
+### Compile and Hot-Reload for Development
 
+```sh
+project root> npm run dev
+```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+project root> npm run build
+project root> .\deploy.ps1 -BucketName money.murph9.com
 project root> aws cloudfront create-invalidation --distribution-id EDWBAVRGQTLM7 --paths "/*"
 ```
-
----
-
-https://www.gatsbyjs.org/docs/deploying-to-s3-cloudfront/
-
-Full documentation for Gatsby lives [on the website](https://www.gatsbyjs.org/). Here are some places to start:
-- **For most developers, we recommend starting with our [in-depth tutorial for creating a site with Gatsby](https://www.gatsbyjs.org/tutorial/).** It starts with zero assumptions about your level of ability and walks through every step of the process.
-- **To dive straight into code samples, head [to our documentation](https://www.gatsbyjs.org/docs/).** In particular, check out the _Guides_, _API Reference_, and _Advanced Tutorials_ sections in the sidebar.
-
-
----
-
-See terraform folder for the AWS stuff required to output the website from the `/public` folder resources.
