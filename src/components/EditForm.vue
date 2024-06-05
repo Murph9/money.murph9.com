@@ -4,6 +4,7 @@ import SimpleModal from "./SimpleModal.vue";
 import { computed, ref } from "vue";
 import DayTypeLib, { DayType } from "@/service/dayType";
 import { Context } from "@/service/appContext";
+import DateLib from "@/service/dateHelpers";
 
 const props = defineProps<{
   entry: JournalEntry | boolean
@@ -15,7 +16,7 @@ const formAlert = ref("");
 const amount = ref(0);
 const isIncome = ref(false);
 const category = ref("");
-const startDate = ref(new Date().toISOString().substring(0, 10));
+const startDate = ref(DateLib.addOffsetToDate(new Date()).toISOString().substring(0, 10));
 const periodCount = ref(1);
 const periodType = ref(DayType.Day);
 const repeats = ref(false);
