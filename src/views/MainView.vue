@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useToast } from "vue-toastification";
-import { Context } from '../service/appContext';
-import { DayType } from "@/service/dayType";
+
 import MainBarGraphControl from "../components/MainBarGraphControl.vue";
 import EditForm from "../components/EditForm.vue";
 import FullRecordList from "../components/FullRecordList.vue";
 import ReportView from "../components/ReportView.vue";
 import RecordsToday from "../components/RecordsToday.vue";
+import { Context } from '../service/appContext';
+import { DayType } from "@/service/dayType";
 import { TypeAndDate } from "@/service/calc";
 import JournalEntry from '@/service/journalEntry';
 
@@ -17,11 +18,8 @@ const amountToday = computed(() => {
   return Context.value.calc.totalFor(DayType.Day, new Date());
 });
 
-const editing = ref<JournalEntry | boolean>(false);
-const viewList = ref(false);
+const editing = ref<JournalEntry | undefined>(undefined);
 const viewReport = ref<TypeAndDate | null>(null);
-
-// modals https://vuejs.org/guide/built-ins/teleport.html#multiple-teleports-on-the-same-target
 
 function viewReportFor(type: DayType, date: Date) {
   viewReport.value = new TypeAndDate(type, date);
@@ -32,7 +30,7 @@ function handleEditEntry(row: JournalEntry) {
     alert('journal entry not set during edit');
     return;
   }
-  
+
   editing.value = row;
 }
 </script>
@@ -45,7 +43,7 @@ function handleEditEntry(row: JournalEntry) {
     </h1>
 
     <EditForm :entry="editing" />
-    <FullRecordList :edit="handleEditEntry"></FullRecordList>
+    <FullRecordList @edit="handleEditEntry"></FullRecordList>
 
   </div>
   <MainBarGraphControl @view-report="viewReportFor"></MainBarGraphControl>

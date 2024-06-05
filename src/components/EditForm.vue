@@ -1,14 +1,33 @@
 <script setup lang="ts">
 import JournalEntry from "@/service/journalEntry";
 import SimpleModal from "./SimpleModal.vue";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import DayTypeLib, { DayType } from "@/service/dayType";
 import { Context } from "@/service/appContext";
 import DateLib from "@/service/dateHelpers";
 
 const props = defineProps<{
-  entry: JournalEntry | boolean
+  entry: JournalEntry | undefined
 }>();
+
+watch(() => props.entry, async (newQ, _) => {
+  if (newQ) {
+    editing.value = true;
+    setTo(newQ);
+  }
+});
+
+function setTo(entry?: JournalEntry) {
+  amount.value = entry?.amount ?? 0;
+  isIncome.value = entry?.isIncome ?? false;
+  category.value = entry?.category ?? '';
+  startDate.value = (entry?.from ?? DateLib.addOffsetToDate(new Date())).toISOString().substring(0, 10);
+  periodCount.value = entry?.lengthCount ?? 1;
+  periodType.value = entry?.lengthType ?? DayType.Day;
+  repeats.value = entry?.repeats ?? false;
+  lastDay.value = entry?.lastDay ? entry.lastDay.toISOString().substring(0, 10) : '';
+  note.value = entry?.note || '';
+}
 
 const editing = ref(false);
 const formAlert = ref("");
@@ -22,7 +41,6 @@ const periodType = ref(DayType.Day);
 const repeats = ref(false);
 const lastDay = ref("");
 const note = ref("");
-
 
 const perDay = computed(() => {
   if (amount.value && periodType.value && periodCount.value) {
@@ -38,6 +56,11 @@ function selectItemEventHandler(item: any) {
 }
 function onBlurEventHandler(event: any) {
   category.value = event.input.value;
+}
+
+function handleModalCancel() {
+  setTo(undefined);
+  editing.value = false;
 }
 
 function handleModalConfirm() {
@@ -66,6 +89,8 @@ function handleModalConfirm() {
 
   console.log("Saving:", entry);
   Context.value.saveRow(entry, () => {
+    // set everything back to the default
+    setTo(undefined);
     editing.value = false;
   }, (str) => {
     formAlert.value = str;
@@ -81,7 +106,7 @@ const headingTextBetter = computed(() => props.entry ? "Edit Record" : "Add Reco
     <button class="btn btn-primary" :disabled="editing" @click="editing = true">Add</button>
   </span>
 
-  <SimpleModal :open="editing" :heading-text="headingTextBetter" cancel-text="Cancel" confirm-text="Save Changes" @cancelled="editing = false" @confirm="handleModalConfirm">
+  <SimpleModal :open="editing" :heading-text="headingTextBetter" cancel-text="Cancel" confirm-text="Save Changes" @cancelled="handleModalCancel" @confirm="handleModalConfirm">
     <p v-if="formAlert" class="error">{{ formAlert }}</p>
     <form class="form-inline">
       <div class="row mb-2">
@@ -104,6 +129,7 @@ const headingTextBetter = computed(() => props.entry ? "Edit Record" : "Add Reco
             id="category"
             :items="categories"
             :minInputLength="0"
+            :defaultItem="category"
             @selectItem="selectItemEventHandler"
             @onBlur="onBlurEventHandler"
             >
