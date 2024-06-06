@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useToast } from "vue-toastification";
-
 import MainBarGraphControl from "../components/MainBarGraphControl.vue";
 import EditForm from "../components/EditForm.vue";
 import FullRecordList from "../components/FullRecordList.vue";
@@ -11,8 +9,6 @@ import { Context } from '../service/appContext';
 import { DayType } from "@/service/dayType";
 import { TypeAndDate } from "@/service/calc";
 import JournalEntry from '@/service/journalEntry';
-
-const toast = useToast();
 
 const amountToday = computed(() => {
   return Context.value.calc.totalFor(DayType.Day, new Date());
@@ -51,10 +47,6 @@ function editClosed() {
 
   </div>
   <MainBarGraphControl @view-report="viewReportFor"></MainBarGraphControl>
-  
   <ReportView v-if="viewReport" :date="viewReport.date" :type="viewReport.type" @close-callback="viewReport = null"></ReportView>
-  
-  <!--{props.saving && <BasicModal message="Saving..."/>}-->
-  
   <RecordsToday />
 </template>

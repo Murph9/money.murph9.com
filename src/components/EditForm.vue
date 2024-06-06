@@ -5,6 +5,9 @@ import { computed, ref, watch } from "vue";
 import DayTypeLib, { DayType } from "@/service/dayType";
 import { Context } from "@/service/appContext";
 import DateLib from "@/service/dateHelpers";
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const props = defineProps<{
   entry: JournalEntry | undefined
@@ -70,6 +73,7 @@ function handleModalCancel() {
   setTo(undefined);
   emits('closed');
   editing.value = false;
+  toast.info("Did not save '" + props.entry?.category + "'");
 }
 
 function handleModalConfirm() {
@@ -102,8 +106,10 @@ function handleModalConfirm() {
     setTo(undefined);
     emits('closed');
     editing.value = false;
+    toast.info("Saved '" + entry.category + "'");
   }, (str) => {
     formAlert.value = str;
+    toast.warning("Failed to save '" + entry.category + "'");
   });
 }
 
@@ -111,7 +117,7 @@ const headingTextBetter = computed(() => props.entry ? "Edit Record" : "Add Reco
 
 function deleteEntry() {
   if (!props.entry) {
-    alert("Deleting an entry that doesn't exist");
+    toast.error("Deleting an entry that doesn't exist");
     setTo(undefined);
     emits('closed');
     editing.value = false;
@@ -123,8 +129,10 @@ function deleteEntry() {
     setTo(undefined);
     emits('closed');
     editing.value = false;
+    toast.info("Deleted '" + props.entry?.category + "'");
   }, (str) => {
     formAlert.value = str;
+    toast.warning("Failed to delete '" + props.entry?.category + "'");
   });
 }
 </script>
