@@ -33,6 +33,10 @@ function handleEditEntry(row: JournalEntry) {
 
   editing.value = row;
 }
+
+function editClosed() {
+  editing.value = undefined;
+}
 </script>
 
 <template>
@@ -42,7 +46,7 @@ function handleEditEntry(row: JournalEntry) {
       <span style="font-size: '.475em'">/day, today</span>
     </h1>
 
-    <EditForm :entry="editing" />
+    <EditForm :entry="editing" @closed="editClosed" />
     <FullRecordList @edit="handleEditEntry"></FullRecordList>
 
   </div>

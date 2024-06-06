@@ -10,7 +10,11 @@ const props = defineProps<{
   entry: JournalEntry | undefined
 }>();
 
-watch(() => props.entry, async (newQ, _) => {
+const emits = defineEmits<{
+  "closed": [void]
+}>();
+
+watch(() => props.entry, async (newQ) => {
   if (newQ) {
     editing.value = true;
     setTo(newQ);
@@ -27,6 +31,7 @@ function setTo(entry?: JournalEntry) {
   repeats.value = entry?.repeats ?? false;
   lastDay.value = entry?.lastDay ? entry.lastDay.toISOString().substring(0, 10) : '';
   note.value = entry?.note || '';
+  deleteConfirm.value = false;
 }
 
 const editing = ref(false);
@@ -41,6 +46,8 @@ const periodType = ref(DayType.Day);
 const repeats = ref(false);
 const lastDay = ref("");
 const note = ref("");
+
+const deleteConfirm = ref(false);
 
 const perDay = computed(() => {
   if (amount.value && periodType.value && periodCount.value) {
@@ -60,6 +67,7 @@ function onBlurEventHandler(event: any) {
 
 function handleModalCancel() {
   setTo(undefined);
+  emits('closed');
   editing.value = false;
 }
 
@@ -91,6 +99,7 @@ function handleModalConfirm() {
   Context.value.saveRow(entry, () => {
     // set everything back to the default
     setTo(undefined);
+    emits('closed');
     editing.value = false;
   }, (str) => {
     formAlert.value = str;
@@ -98,6 +107,25 @@ function handleModalConfirm() {
 }
 
 const headingTextBetter = computed(() => props.entry ? "Edit Record" : "Add Record" + ": $"+ Math.round(perDay.value * 100)/100 + "/day");
+
+function deleteEntry() {
+  if (!props.entry) {
+    alert("Deleting an entry that doesn't exist");
+    setTo(undefined);
+    emits('closed');
+    editing.value = false;
+    return;
+  }
+
+  Context.value.deleteRow(props.entry, () => {
+    // set everything back to the default
+    setTo(undefined);
+    emits('closed');
+    editing.value = false;
+  }, (str) => {
+    formAlert.value = str;
+  });
+}
 </script>
 
 <template>
@@ -175,6 +203,11 @@ const headingTextBetter = computed(() => props.entry ? "Edit Record" : "Add Reco
         </div>
       </div>
     </form>
+    <div class="row">
+      <button v-if="props.entry" class="btn btn-danger col-3" @click="deleteConfirm = true" :disabled="deleteConfirm">Delete</button>
+      <div class="col-3"></div>
+      <button v-if="props.entry && deleteConfirm" class="btn btn-danger col-3" @click="deleteEntry" :disabled="!deleteConfirm">REALLY Delete</button>
+    </div>
   </SimpleModal>
 </template>
 
