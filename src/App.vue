@@ -17,6 +17,7 @@ import { onBeforeMount } from 'vue';
 
 onBeforeMount(() => {
   ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
+  Context.value.autoLogin = document.cookie.indexOf("autoLogin") !== -1;
 });
 
 </script>
