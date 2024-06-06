@@ -37,7 +37,7 @@ export default class AwsS3Service {
             }
             const a = await res.Body.transformToString();
             success({fileName: file, obj: JSON.parse(a)});
-        } catch (err) {
+        } catch (err: any) {
             console.log("Failed to get file", err);
             if (err.name === "NoSuchKey") {
                 // if the file doesn't exist yet, try and create it
@@ -55,7 +55,7 @@ export default class AwsS3Service {
         try {
             await this.s3.send(command);
             success(content);
-        } catch (err) {
+        } catch (err: any) {
             failure(err.message);
         }
     }

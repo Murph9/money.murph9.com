@@ -12,7 +12,7 @@ const props = defineProps<{
 const count = computed(() => props.maxCount ? props.maxCount : 50);
 const dataSlice = computed(() => props.data.slice(0, count.value));
 
-const chartData = computed(() => {
+const chartData: any = computed(() => { //'any', im stupid and because number and number[] don't work together in the component
   return {
     labels: dataSlice.value.map((x) => x.name),
     datasets: [
@@ -22,12 +22,12 @@ const chartData = computed(() => {
         order: 3
       },
       {
-        data: dataSlice.value.map((x) => x.added == 0 ? [0,0] : [x.existing, x.existing + x.added]),
+        data: dataSlice.value.map((x) => x.added == 0 ? [0,0] : (x.existing, x.existing + x.added)),
         backgroundColor: "#84d888",
         order: 2
       },
       {
-        data: dataSlice.value.map((x) => x.removed == 0 ? [0,0] : [x.existing + x.removed, x.existing]),
+        data: dataSlice.value.map((x) => x.removed == 0 ? [0,0] : (x.existing + x.removed, x.existing)),
         backgroundColor: "#844444",
         order: 1
       }

@@ -16,7 +16,7 @@ export default class DataService {
         const that = this;
         this.awsService.getFile(this.fileName, function(result: any) {
             console.log("Entries: " + result.obj.length);
-            that.rawData = result.obj.map((x: object) => {
+            that.rawData = result.obj.map((x: any) => {
                 const entry = new JournalEntry(new Date(Date.parse(x['from'])), x['amount'], x['lengthCount'], DayTypeLib.parseDayType(x['lengthType']), x['category']);
                 entry.id = x['id'];
                 entry.isIncome = x['isIncome'];
