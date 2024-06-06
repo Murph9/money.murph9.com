@@ -31,6 +31,11 @@ project root> npm run dev
 
 ```sh
 project root> npm run build
+```
+
+## Deploy
+
+```sh
 project root> .\deploy.ps1 -BucketName money.murph9.com
 project root> aws cloudfront create-invalidation --distribution-id EDWBAVRGQTLM7 --paths "/*"
 ```
