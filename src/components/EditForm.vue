@@ -32,6 +32,7 @@ function setTo(entry?: JournalEntry) {
   lastDay.value = entry?.lastDay ? entry.lastDay.toISOString().substring(0, 10) : '';
   note.value = entry?.note || '';
   deleteConfirm.value = false;
+  formAlert.value = '';
 }
 
 const editing = ref(false);
@@ -142,7 +143,7 @@ function deleteEntry() {
           <label for="amount" class="form-label">Amount</label>
           <div class="input-group">
             <span class="input-group-text">$</span>
-            <input type="number" id="amount" class="form-control" v-model="amount" />
+            <input type="number" id="amount" class="form-control" v-model="amount" :autofocus="!props.entry" />
           </div>
         </div>
         <div class="col-5 form-check">
