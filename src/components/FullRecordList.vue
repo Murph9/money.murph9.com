@@ -6,12 +6,15 @@ import { Context } from '@/service/appContext';
 import { DayType } from '../service/dayType';
 import DateLib from '@/service/dateHelpers';
 
+const PAGE_SIZE = 20;
+
 const emit = defineEmits<{
   edit: [entry: JournalEntry]
 }>();
 
 const viewing = ref(false);
 const filter = ref("");
+const pageIndex = ref(0);
 
 const totalRecords = computed(() => {
   return Context.value.getRawData();
@@ -22,11 +25,26 @@ const recordsToday = computed(() => totalRecords.value.filter(x => x.from > Date
 
 const filteredData = computed(() => {
   const searchExp =  new RegExp(filter.value, "i");
-  return totalRecords.value
-    .filter(x => searchExp.test(x.category) || (x.note && searchExp.test(x.note)))
-    .sort((x: JournalEntry, y: JournalEntry) => {
+  return [...totalRecords.value]
+      .sort((x: JournalEntry, y: JournalEntry) => {
         return +y.from - +x.from;
-    });
+      })
+      .filter(x => searchExp.test(x.category) || (x.note && searchExp.test(x.note)));
+});
+
+const pageIndexesToShow = computed(() => {
+  const list = [pageIndex.value];
+  const max = Math.ceil(filteredData.value.length / PAGE_SIZE);
+  
+  for (let i = pageIndex.value - 1; i >= pageIndex.value - 3; i--) {
+    if (i >= 0)
+      list.unshift(i);
+  }
+  for (let i = pageIndex.value + 1; i <= pageIndex.value + 3; i++) {
+    if (i <= max)
+      list.push(i);
+  }
+  return list;
 });
 
 function editRow(row: JournalEntry) {
@@ -60,7 +78,7 @@ function editRow(row: JournalEntry) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in filteredData" :key="row.id">
+        <tr v-for="row in filteredData.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE - 1)" :key="row.id">
           <td>{{ row.category }}</td>
           <td>${{ row.amount.toFixed(2) }}</td>
           <td>{{ row.from.toLocaleDateString() }}</td>
@@ -69,5 +87,8 @@ function editRow(row: JournalEntry) {
         </tr>
       </tbody>
     </table>
+    <div class="input-group">
+      <button v-for="i in pageIndexesToShow" :key="i" class="btn" :class="i == pageIndex ? 'btn-primary' : 'btn-outline-primary'" @click="pageIndex = i">{{ i }}</button>
+    </div>
   </SimpleModal>
 </template>
