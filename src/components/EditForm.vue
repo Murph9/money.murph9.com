@@ -36,6 +36,8 @@ function setTo(entry?: JournalEntry) {
   note.value = entry?.note || '';
   deleteConfirm.value = false;
   formAlert.value = '';
+  toggleNewCategory.value = false;
+  newCategory.value = '';
 }
 
 const editing = ref(false);
@@ -43,7 +45,11 @@ const formAlert = ref("");
 
 const amount = ref(0);
 const isIncome = ref(false);
+
 const category = ref("");
+const toggleNewCategory = ref(false);
+const newCategory = ref("");
+
 const startDate = ref(DateLib.addOffsetToDate(new Date()).toISOString().substring(0, 10));
 const periodCount = ref(1);
 const periodType = ref(DayType.Day);
@@ -78,16 +84,17 @@ function handleModalCancel() {
 
 function handleModalConfirm() {
   if (!amount.value) { formAlert.value = "Please set a total amount"; return; }
-  if (!category.value) { formAlert.value = "Please set a category"; return; }
   if (!startDate.value) { formAlert.value = "Please set a start date"; return; }
   if (!(periodCount.value) || !(periodType.value)) {
     formAlert.value = "Select both period length and period type";
     return;
   }
+  const ourCategory = toggleNewCategory.value ? newCategory.value : category.value;
+  if (!ourCategory) { formAlert.value = "Please set a category"; return; }
 
   const startDateDate = new Date(Date.parse(startDate.value));
 
-  const entry = new JournalEntry(startDateDate, amount.value, periodCount.value, periodType.value, category.value.toLocaleLowerCase());
+  const entry = new JournalEntry(startDateDate, amount.value, periodCount.value, periodType.value, ourCategory.toLocaleLowerCase());
   entry.id = props.entry && props.entry instanceof JournalEntry ? props.entry.id : -1;
   entry.isIncome = isIncome.value;
   entry.repeats = repeats.value;
@@ -160,10 +167,14 @@ function deleteEntry() {
         </div>
       </div>
       <div class="row mb-2">
-        <label for="category" class="col-4 col-form-label">Category</label>
+        <label for="category" class="col-3 col-form-label">Category</label>
+        <button class="btn btn-info col-1" type="button" @click="toggleNewCategory = !toggleNewCategory">New</button>
         <div class="col-8">
-          <vue3-simple-typeahead class="form-control"
+          <input type="text" v-if="toggleNewCategory" class="form-control" v-model="newCategory" />
+          <vue3-simple-typeahead
+            v-if="!toggleNewCategory"
             id="category"
+            class="form-select"
             :items="categories"
             :minInputLength="0"
             :defaultItem="category"
