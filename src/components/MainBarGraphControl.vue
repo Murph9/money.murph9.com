@@ -22,14 +22,14 @@ function viewReport(type: DayType, date: Date) {
         <div class="row">
             <div class="col-2"></div>
             <div class="input-group col">
-                <button class="btn btn-primary" @click="periodOffset--">🠈</button>
+                <button class="btn btn-primary" @click="periodOffset--">&lt;-</button>
                 <select class="form-select" v-model="periodType">
                     <option :value="DayType.Day">Day</option>
                     <option :value="DayType.Week">Week</option>
                     <option :value="DayType.Month">Month</option>
                     <option :value="DayType.Year">Year</option>
                 </select>
-                <button class="btn btn-primary" @click="periodOffset++">🠊</button>
+                <button class="btn btn-primary" @click="periodOffset++">-&gt;</button>
             </div>
             <div class="col-2"></div>
         </div>

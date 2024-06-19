@@ -67,12 +67,14 @@ const chartData = computed(() => {
       {
         data: barData.value.map((x) => x.amount),
         backgroundColor: barData.value.map((x) => getColour(x.amount, x.future)),
-        borderColor: barData.value.map((x) => x.current ? 'grey' : 'transparent'),
-        borderWidth: 5,
+        borderColor: barData.value.map((x) => x.current ? 'aqua' : 'transparent'),
+        borderWidth: 1,
+        barPercentage: 0.95,
+        categoryPercentage: 0.95,
         datalabels: {
           align: 'start' as const, // stops typescript errors
           anchor: 'end' as const
-        }
+        },
       }
     ],
   };
@@ -90,6 +92,17 @@ const chartOptions = ref({
     
     const barDetails = barData.value[list[0].index];
     emit("viewReport", props.periodType, barDetails.date);
+  },
+  scales: {
+    y: {
+      display: false
+    },
+    x: {
+      ticks: {
+        autoSkip: false,
+        maxRotation: 0
+      }
+    }
   },
   plugins: {
     legend: {
