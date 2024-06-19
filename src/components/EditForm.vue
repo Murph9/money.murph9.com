@@ -70,9 +70,6 @@ const categories = computed(() => Context.value.calc.categories);
 
 function selectItemEventHandler(item: any) {
   category.value = item;
-}
-function onBlurEventHandler(event: any) {
-  category.value = event.input;
 
   if (!props.entry) {
     // update the period length and type with the last used one (if not editing)
@@ -80,6 +77,9 @@ function onBlurEventHandler(event: any) {
     periodType.value = defaults.type;
     periodCount.value = defaults.count;
   }
+}
+function onBlurEventHandler(event: any) {
+  category.value = event.input;
 }
 
 function handleModalCancel() {
