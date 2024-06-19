@@ -72,7 +72,14 @@ function selectItemEventHandler(item: any) {
   category.value = item;
 }
 function onBlurEventHandler(event: any) {
-  category.value = event.input.value;
+  category.value = event.input;
+
+  if (!props.entry) {
+    // update the period length and type with the last used one (if not editing)
+    const defaults = Context.value.calc.getCategoryDefault(category.value);
+    periodType.value = defaults.type;
+    periodCount.value = defaults.count;
+  }
 }
 
 function handleModalCancel() {
