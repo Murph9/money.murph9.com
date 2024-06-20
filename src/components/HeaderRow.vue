@@ -11,7 +11,7 @@ function logout() {
 }
 
 const lastSaved = computed(() => {
-  return new Date(Context.value.getLastModified() ?? new Date());
+  return new Date(Context.value.getLastModified() ?? new Date(0));
 });
 </script>
 

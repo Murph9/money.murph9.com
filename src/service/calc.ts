@@ -2,6 +2,7 @@ import JournalEntry from './journalEntry';
 import DayTypeLib, { DayType } from "./dayType";
 import DateLib from './dateHelpers';
 import ObjCache from './objCache';
+import type { Db } from './dataService';
 
 export class TypeAndDate {
     type: DayType;
@@ -43,13 +44,13 @@ export default class Calc {
     rowCache: ObjCache = new ObjCache();
     categoryDefaultCache: Map<string, {count: number, type: DayType}> = new Map();
 
-    constructor(data: Array<JournalEntry>) {
-        this.dayRanges = data.map(x => new Range(x));
+    constructor(db: Db) {
+        this.dayRanges = db.entries.map(x => new Range(x));
         
         // distinct but also put the categories in reverse order so most recent is first
-        this.categories = [... new Set(data.map(x => x.category).reverse())];
+        this.categories = [... new Set(db.entries.map(x => x.category).reverse())];
 
-        for (const row of data) {
+        for (const row of db.entries) {
             // just use the last entry of the category
             this.categoryDefaultCache.set(row.category, {count: row.lengthCount, type: row.lengthType});
         }

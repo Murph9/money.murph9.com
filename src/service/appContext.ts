@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import DataService from './dataService';
+import DataService, { Db } from './dataService';
 import type JournalEntry from './journalEntry';
 import Calc from './calc';
 
@@ -7,15 +7,12 @@ export class AppConfig {
     autoLogin: boolean = false;
     loggedOut: boolean = false;
     private db?: DataService;
-    calc: Calc = new Calc([]);
+    calc: Calc = new Calc(new Db());
 
     setDb(db: DataService | undefined) {
         this.db = db;
         if (db)
             this.calc = new Calc(db.rawData)
-    }
-    getRawData() {
-        return [...this.db?.getRaw() || []];
     }
     
     successful() {
@@ -40,11 +37,15 @@ export class AppConfig {
     }
     
     getCount() {
-        return this.db?.rawData?.length || 0;
+        return this.db?.rawData.entries.length || 0;
+    }
+
+    getRecords() {
+        return [...this.db?.rawData?.entries || []];
     }
 
     getLastModified() {
-        return "Unknown"; // TODO
+        return this.db?.rawData.lastModified;
     }
 
     getLastUserAgent() {

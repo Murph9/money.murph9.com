@@ -17,7 +17,7 @@ const filter = ref("");
 const pageIndex = ref(0);
 
 const totalRecords = computed(() => {
-  return Context.value.getRawData();
+  return Context.value.getRecords();
 });
 
 const recordsThisWeek = computed(() => totalRecords.value.filter(x => x.from > DateLib.addDays(new Date(), -7)));
