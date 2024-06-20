@@ -14,9 +14,11 @@ export default class DataService {
 
     load(success: () => void, failure: (err: string) => void) {
         const that = this;
-        this.awsService.getFile(this.fileName, function(result: any) {
-            console.log("Entries: " + result.obj.length);
-            that.rawData = result.obj.map((x: any) => {
+        this.awsService.getFile(this.fileName, function(result) {
+            const data = JSON.parse(result);
+            
+            console.log("Entries: " + data.length);
+            that.rawData = data.map((x: any) => {
                 const entry = new JournalEntry(new Date(Date.parse(x['from'])), x['amount'], x['lengthCount'], DayTypeLib.parseDayType(x['lengthType']), x['category']);
                 entry.id = x['id'];
                 entry.isIncome = x['isIncome'];
@@ -58,7 +60,7 @@ export default class DataService {
         }
 
         const that = this;
-        this.awsService.saveFile(this.fileName, this.rawData, success, function(response: string) {
+        this.awsService.saveFile(this.fileName, JSON.stringify(this.rawData), success, function(response: string) {
             that.rawData = that.rawData.filter(x => x != newData); // revert save, show message
             failure(response);
         });
@@ -74,7 +76,7 @@ export default class DataService {
         this.rawData = this.rawData.filter(x => x.id != row.id);
 
         const that = this;
-        this.awsService.saveFile(this.fileName, this.rawData, success, function(response: string) {
+        this.awsService.saveFile(this.fileName, JSON.stringify(this.rawData), success, function(response: string) {
             that.rawData.push(row); // revert save, show message
             failure(response);
         });

@@ -27,7 +27,7 @@ export default class AwsS3Service {
         });
     }
 
-    async getFile(file: string, success: (obj: any) => void, failure: (err: string) => void) {
+    async getFile(file: string, success: (content: string) => void, failure: (err: string) => void) {
         console.log("getting file: " + file);
         const command = new GetObjectCommand({Bucket: this.config.bucketName, Key: file, ResponseExpires: new Date()});
         try {
@@ -35,22 +35,22 @@ export default class AwsS3Service {
             if (!res.Body) {
                 throw new Error("S3 result empty");
             }
-            const a = await res.Body.transformToString();
-            success({fileName: file, obj: JSON.parse(a)});
+            const content = await res.Body.transformToString();
+            success(content);
         } catch (err: any) {
             console.log("Failed to get file", err);
             if (err.name === "NoSuchKey") {
                 // if the file doesn't exist yet, try and create it
-                this.saveFile(file, [], () => success("[]"), (message) => failure(message));
+                this.saveFile(file, "[]", success, failure);
             } else {
                 failure(err.message);
             }
         }
     }
 
-    async saveFile(file: string, content: object, success: (err: object) => void, failure: (err: string) => void) {
+    async saveFile(file: string, content: string, success: (content: string) => void, failure: (err: string) => void) {
         console.log("saving file: " + file);
-        const command = new PutObjectCommand({Bucket: this.config.bucketName, Key: file, Body: JSON.stringify(content), ContentType: "application/json"});
+        const command = new PutObjectCommand({Bucket: this.config.bucketName, Key: file, Body: content, ContentType: "application/json"});
 
         try {
             await this.s3.send(command);
