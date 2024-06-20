@@ -27,7 +27,7 @@ function formatDiff(value: number): string {
 </script>
 
 <template>
-  <table class="table table-sm">
+  <table class="table table-striped table-bordered table-hover table-sm">
     <thead>
       <tr><th :style="{ width: nameWidth }">Category</th><th>Previous</th><th>Current</th><th v-if="props.showDiff">Diff</th></tr>
     </thead>
