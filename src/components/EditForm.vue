@@ -105,9 +105,11 @@ function handleModalConfirm() {
   entry.id = props.entry && props.entry instanceof JournalEntry ? props.entry.id : -1;
   entry.isIncome = isIncome.value;
   entry.repeats = repeats.value;
+  entry.note = note.value;
+
   if (lastDay.value)
     entry.lastDay = new Date(Date.parse(lastDay.value));
-  
+
   const message = entry.validate();
   if (message) {
     formAlert.value = message;
@@ -152,7 +154,6 @@ function deleteEntry() {
 </script>
 
 <template>
-  
   <span class="float-start">
     <button class="btn btn-primary" :disabled="editing" @click="editing = true">Add</button>
   </span>
