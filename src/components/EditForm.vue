@@ -103,8 +103,8 @@ function handleModalConfirm() {
 
   const entry = new JournalEntry(startDateDate, amount.value, periodCount.value, periodType.value, ourCategory.toLocaleLowerCase());
   entry.id = props.entry && props.entry instanceof JournalEntry ? props.entry.id : -1;
-  entry.isIncome = isIncome.value;
-  entry.repeats = repeats.value;
+  entry.isIncome = !!isIncome.value;
+  entry.repeats = !!repeats.value;
   entry.note = note.value;
 
   if (lastDay.value)
@@ -170,7 +170,7 @@ function deleteEntry() {
           </div>
         </div>
         <div class="col-5 form-check">
-          <input type="checkbox" class="form-check-input" :checked="isIncome" id="isIncome" />
+          <input type="checkbox" class="form-check-input" v-model="isIncome" />
           <label for="isIncome" class="form-check-label">Is Income</label>
         </div>
       </div>
@@ -215,7 +215,7 @@ function deleteEntry() {
       </div>
       <div class="row mb-2">
         <div class="col-4 form-check">
-          <input type="checkbox" class="form-check-input" id="repeats" :checked="repeats" />
+          <input type="checkbox" class="form-check-input" v-model="repeats" />
           <label for="repeats" class="form-check-label">Repeats</label>
         </div>
         <div class="col-8">
