@@ -68,6 +68,15 @@ const perDay = computed(() => {
 
 const categories = computed(() => Context.value.calc.categories);
 
+function addValue(value: number) {
+  amount.value += value;
+  amount.value = parseFloat(amount.value.toFixed(2));
+}
+function multValue(value: number) {
+  amount.value *= value;
+  amount.value = parseFloat(amount.value.toFixed(2));
+}
+
 function selectItemEventHandler(item: any) {
   category.value = item;
 
@@ -86,7 +95,11 @@ function handleModalCancel() {
   setTo(undefined);
   emits('closed');
   editing.value = false;
-  toast.info("Did not save '" + props.entry?.category + "'");
+  if (!props.entry) {
+    toast.info("Did not save");
+  } else {
+    toast.info("Did not save '" + props.entry?.category + "'");
+  }
 }
 
 function handleModalConfirm() {
@@ -101,7 +114,7 @@ function handleModalConfirm() {
 
   const startDateDate = new Date(Date.parse(startDate.value));
 
-  const entry = new JournalEntry(startDateDate, amount.value, periodCount.value, periodType.value, ourCategory.toLocaleLowerCase());
+  const entry = new JournalEntry(startDateDate, amount.value, Math.round(periodCount.value), periodType.value, ourCategory.toLocaleLowerCase());
   entry.id = props.entry && props.entry instanceof JournalEntry ? props.entry.id : -1;
   entry.isIncome = !!isIncome.value;
   entry.repeats = !!repeats.value;
@@ -158,25 +171,63 @@ function deleteEntry() {
     <button class="btn btn-primary" :disabled="editing" @click="editing = true">Add</button>
   </span>
 
-  <SimpleModal :open="editing" :heading-text="headingTextBetter" cancel-text="Cancel" confirm-text="Save Changes" @cancelled="handleModalCancel" @confirm="handleModalConfirm">
+  <SimpleModal
+    :open="editing"
+    :showFooter="true"
+    :heading-text="headingTextBetter"
+    cancel-text="Cancel"
+    confirm-text="Save Changes"
+    @cancelled="handleModalCancel"
+    @confirm="handleModalConfirm"
+  >
     <p v-if="formAlert" class="error">{{ formAlert }}</p>
     <form class="form-inline">
       <div class="row mb-2">
-        <div class="col-7">
+        <div class="col-9">
           <label for="amount" class="form-label">Amount</label>
           <div class="input-group">
             <span class="input-group-text">$</span>
-            <input type="number" id="amount" class="form-control" v-model="amount" :autofocus="!props.entry" />
+            <input
+              type="number"
+              id="amount"
+              step="any"
+              class="form-control"
+              v-model="amount"
+              :autofocus="!props.entry"
+            />
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-warning"
+              @click="() => addValue(-0.01)"
+            >
+              -0.01
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              @click="() => multValue(0.5)"
+            >
+              /2
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-danger" @click="() => multValue(2)">
+              *2
+            </button>
           </div>
         </div>
-        <div class="col-5 form-check">
+        <div class="col-3 form-check">
           <input type="checkbox" class="form-check-input" v-model="isIncome" />
           <label for="isIncome" class="form-check-label">Is Income</label>
         </div>
       </div>
       <div class="row mb-2">
         <label for="category" class="col-3 col-form-label">Category</label>
-        <button class="btn btn-info col-1" type="button" @click="toggleNewCategory = !toggleNewCategory">New</button>
+        <button
+          class="btn btn-info col-1"
+          type="button"
+          @click="toggleNewCategory = !toggleNewCategory"
+        >
+          New
+        </button>
         <div class="col-8">
           <input type="text" v-if="toggleNewCategory" class="form-control" v-model="newCategory" />
           <vue3-simple-typeahead
@@ -188,8 +239,10 @@ function deleteEntry() {
             :defaultItem="category"
             @selectItem="selectItemEventHandler"
             @onBlur="onBlurEventHandler"
-            >
-            <template #list-item-text="slot"><span v-html="slot.boldMatchText(slot.itemProjection(slot.item))"></span></template>
+          >
+            <template #list-item-text="slot"
+              ><span v-html="slot.boldMatchText(slot.itemProjection(slot.item))"></span
+            ></template>
           </vue3-simple-typeahead>
         </div>
       </div>
@@ -232,9 +285,23 @@ function deleteEntry() {
       </div>
     </form>
     <div class="row">
-      <button v-if="props.entry" class="btn btn-danger col-3" @click="deleteConfirm = true" :disabled="deleteConfirm">Delete</button>
+      <button
+        v-if="props.entry"
+        class="btn btn-danger col-3"
+        @click="deleteConfirm = true"
+        :disabled="deleteConfirm"
+      >
+        Delete
+      </button>
       <div class="col-3"></div>
-      <button v-if="props.entry && deleteConfirm" class="btn btn-danger col-3" @click="deleteEntry" :disabled="!deleteConfirm">REALLY Delete</button>
+      <button
+        v-if="props.entry && deleteConfirm"
+        class="btn btn-danger col-3"
+        @click="deleteEntry"
+        :disabled="!deleteConfirm"
+      >
+        REALLY Delete
+      </button>
     </div>
   </SimpleModal>
 </template>
