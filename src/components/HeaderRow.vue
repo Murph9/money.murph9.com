@@ -20,10 +20,10 @@ const lastSaved = computed(() => {
     <h2>{{ APP.title }}</h2>
     <pre class="flex-fill">v{{ version }}</pre>
     <span v-if="Context.successful()">
-      <p style="text-align: right; margin-bottom: 0;" :title="`${Context.getLastUserAgent()}`">
+      <span style="text-align: right; margin-bottom: 0;" :title="`${Context.getLastUserAgent()}`">
         <pre>{{ lastSaved.toLocaleDateString() }}&nbsp;{{ lastSaved.toLocaleTimeString() }}</pre>
         <pre>Total count: {{ Context.getCount() ?? 0 }}</pre>
-      </p>
+      </span>
     </span>
     &nbsp;&nbsp;
     <span v-if="Context.successful()" class="float-last">
