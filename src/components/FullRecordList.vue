@@ -3,10 +3,10 @@ import type JournalEntry from '@/service/journalEntry';
 import SimpleModal from './SimpleModal.vue';
 import { computed, ref } from 'vue';
 import { Context } from '@/service/appContext';
-import { DayType } from '../service/dayType';
 import DateLib from '@/service/dateHelpers';
+import RowsTable from './RowsTable.vue';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 15; // not quite right
 
 const emit = defineEmits<{ edit: [entry: JournalEntry] }>();
 
@@ -76,35 +76,12 @@ function editRow(row: JournalEntry) {
         today: {{ recordsToday.length }}, week: {{ recordsThisWeek.length }}
       </div>
     </div>
-    <table class="table table-sm table-hover table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>Category</th>
-          <th>Amount</th>
-          <th>Start Date</th>
-          <th>Length</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="row in filteredData.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE - 1)"
-          :key="row.id"
-        >
-          <td>{{ row.category }}</td>
-          <td>${{ row.amount.toFixed(2) }}</td>
-          <td>{{ row.from.toLocaleDateString() }}</td>
-          <td>
-            {{
-              row.repeats && !row.lastDay
-                ? 'inf'
-                : `${row.lengthCount} * ${DayType[row.lengthType]}`
-            }}
-          </td>
-          <td><button class="btn btn-secondary" @click="editRow(row)">Edit</button></td>
-        </tr>
-      </tbody>
-    </table>
+    <RowsTable
+      :show-edit="true"
+      :show-note="false"
+      :data="filteredData.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE - 1)"
+      @edit-row="editRow"
+    ></RowsTable>
     <div class="input-group">
       <button
         v-for="i in pageIndexesToShow"
