@@ -80,6 +80,7 @@ function editRow(row: JournalEntry) {
       :show-edit="true"
       :show-note="false"
       :data="filteredData.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE - 1)"
+      :one-line="false"
       @edit-row="editRow"
     ></RowsTable>
     <div class="input-group">
